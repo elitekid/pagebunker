@@ -19,7 +19,7 @@ The JSON files in your Downloads folder remain on disk and can be used to restor
 
 ## Features
 
-- **Save this article** — toolbar button (then Save in the panel), `Alt+Shift+L` (`Option+Shift+L` on Mac), or right-click menu. Title, author, publish date, and body are extracted; ads, menus, and comments are left out. If the body cannot be extracted, the link is saved instead.
+- **Save this article** — toolbar button (then "Save this article" in the panel), `Alt+Shift+L` (`Option+Shift+L` on Mac), or right-click menu. Title, author, publish date, and body are extracted; ads, menus, and comments are left out. If the body cannot be extracted, the link is saved instead.
 - **Library** — To read, Read, Archive, and Trash. Articles in Trash are deleted automatically after 30 days. Sort, add tags, and select multiple articles at once.
 - **Reader** — saved articles open without an internet connection, and still open after the original page is deleted. Adjust font size, line spacing, and width. Light and dark themes. Remembers where you stopped reading. Marks an article as read when you reach the end (can be turned off).
 - **Images off by default** — no request goes to the original site until you click "Show images" in an article or turn them on in settings.
