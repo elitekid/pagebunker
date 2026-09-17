@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+
+# 내부 작업 문서는 비공개 저장소(pagebunker-internal)에 둔다
+docs/specs/
+docs/briefs/
+docs/evidence/
+docs/release/
+docs/STATUS.md

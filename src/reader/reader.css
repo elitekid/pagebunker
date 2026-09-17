@@ -1,0 +1,125 @@
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.notice-banner {
+  margin: 1rem auto;
+  max-width: var(--reader-width, 680px);
+  padding: 0.75rem 1rem;
+  background: #fef3c7;
+  color: #78350f;
+  border-radius: var(--radius);
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.reader-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+}
+
+.reader-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.reader-nav a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.reader-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.reader-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.reader-main {
+  max-width: var(--reader-width, 680px);
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+  background: var(--reader-bg);
+  color: var(--reader-text);
+}
+
+.article-meta h1 {
+  font-size: 1.75rem;
+  line-height: 1.25;
+  margin: 0 0 0.5rem;
+}
+
+.meta-line {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0 0 0.25rem;
+}
+
+.read-time {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0 0 1.5rem;
+}
+
+.article-content {
+  font-size: var(--reader-font-size, 18px);
+  line-height: var(--reader-line-height, 1.6);
+}
+
+.article-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.article-content .rl-img-placeholder {
+  display: block;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.article-content pre {
+  overflow-x: auto;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.article-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.article-content th,
+.article-content td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.5rem;
+}
+
+#read-sentinel {
+  height: 1px;
+}
+
+.hidden {
+  display: none !important;
+}

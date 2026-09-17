@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>PageBunker</title>
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="library.css">
+</head>
+<body>
+  <header class="library-header">
+    <h1 data-i18n="libraryTitle">Library</h1>
+    <div class="header-actions">
+      <button type="button" id="btn-import" class="btn-secondary" data-i18n="importBtn">Import</button>
+      <button type="button" id="btn-restore-undo" class="btn-secondary hidden" data-i18n="restoreUndoReplace">Undo replace restore</button>
+      <button type="button" id="btn-export" class="btn-secondary hidden" data-i18n="exportBtn">Export</button>
+      <a href="../options/options.html" data-i18n="settingsTitle">Settings</a>
+    </div>
+  </header>
+
+  <div id="backup-status" class="backup-status hidden"></div>
+  <div id="backup-notice" class="backup-notice hidden">
+    <span id="backup-notice-text"></span>
+    <button type="button" id="btn-backup-notice-dismiss" class="btn-link" data-i18n="dismiss">Dismiss</button>
+  </div>
+  <div id="import-resume" class="import-resume hidden"></div>
+
+  <section id="onboarding" class="onboarding hidden">
+    <h2 data-i18n="onboardingTitle">Welcome to PageBunker</h2>
+    <p data-i18n="onboardingPin">Pin the toolbar icon for quick saves.</p>
+    <p data-i18n="onboardingSave">Open any article and click the icon to save.</p>
+    <p id="onboarding-shortcut"></p>
+    <button type="button" id="btn-onboarding-import" class="btn-primary" data-i18n="onboardingImport">Import from Pocket</button>
+    <button type="button" id="btn-onboarding-dismiss" class="btn-link" data-i18n="onboardingDismiss">Got it</button>
+  </section>
+
+  <div id="review-banner" class="review-banner hidden" role="status" aria-live="polite">
+    <p id="review-banner-text" class="review-banner-text" data-i18n="reviewPromptBody"></p>
+    <div class="review-banner-actions">
+      <button type="button" id="btn-review-write" class="btn-primary" data-i18n="reviewLeave"></button>
+      <button type="button" id="btn-review-dismiss" class="btn-link" data-i18n="reviewOk"></button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input type="search" id="search" data-i18n-placeholder="searchPlaceholder" placeholder="Search articles">
+    <select id="sort">
+      <option value="newest" data-i18n="sortNewest">Newest</option>
+      <option value="oldest" data-i18n="sortOldest">Oldest</option>
+      <option value="shortest" data-i18n="sortShortest">Shortest</option>
+    </select>
+    <select id="tag-filter">
+      <option value="" data-i18n="allTags">All tags</option>
+    </select>
+    <button type="button" id="btn-select-mode" class="btn-secondary" data-i18n="selectMode">Select</button>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button type="button" class="tab active" data-tab="unread" data-i18n="tabUnread">To read</button>
+    <button type="button" class="tab" data-tab="read" data-i18n="tabRead">Read</button>
+    <button type="button" class="tab" data-tab="archive" data-i18n="tabArchive">Archive</button>
+    <button type="button" class="tab" data-tab="trash" data-i18n="tabTrash">Trash</button>
+  </nav>
+
+  <div id="selection-bar" class="selection-bar hidden">
+    <span id="selection-count"></span>
+    <button type="button" id="btn-sel-read" data-i18n="markRead">Mark read</button>
+    <button type="button" id="btn-sel-archive" data-i18n="moveArchive">Archive</button>
+    <button type="button" id="btn-sel-trash" data-i18n="moveTrash">Delete</button>
+    <button type="button" id="btn-sel-restore" class="hidden" data-i18n="restore">Restore</button>
+    <button type="button" id="btn-sel-tags" data-i18n="addTags">Add tags</button>
+    <button type="button" id="btn-sel-export" data-i18n="exportBtn">Export</button>
+    <button type="button" id="btn-sel-cancel" data-i18n="cancelSelect">Cancel</button>
+  </div>
+
+  <main>
+    <p id="empty" class="hidden" data-i18n="libraryEmpty">No saved articles yet.</p>
+    <ul id="list" class="article-list"></ul>
+    <button type="button" id="btn-load-more" class="btn-secondary hidden" data-i18n="loadMore">Load more</button>
+  </main>
+
+  <dialog id="import-dialog">
+    <form method="dialog">
+      <h2 data-i18n="importTitle">Import</h2>
+      <input type="file" id="import-file" accept=".csv,.html,.htm,.txt,.json">
+      <div id="import-preview" class="import-preview"></div>
+      <div class="dialog-actions">
+        <button type="button" id="btn-import-apply" class="btn-primary" data-i18n="importApply">Import</button>
+        <button type="button" id="btn-restore-merge" class="btn-secondary hidden" data-i18n="restoreMerge">Merge restore</button>
+        <button type="button" id="btn-restore-replace" class="btn-secondary hidden" data-i18n="restoreReplace">Replace restore</button>
+        <button type="button" id="btn-import-undo" class="btn-secondary hidden" data-i18n="importUndo">Undo import</button>
+        <button value="cancel" class="btn-link" data-i18n="cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="tag-dialog">
+    <form method="dialog">
+      <h2 data-i18n="addTags">Add tags</h2>
+      <input type="text" id="tag-input" data-i18n-placeholder="tagPlaceholder" placeholder="tag1, tag2">
+      <div class="dialog-actions">
+        <button type="button" id="btn-tag-apply" class="btn-primary" data-i18n="apply">Apply</button>
+        <button value="cancel" class="btn-link" data-i18n="cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="export-dialog">
+    <form method="dialog">
+      <h2 data-i18n="exportTitle">Export selected</h2>
+      <label><input type="radio" name="export-format" value="html" checked> <span data-i18n="exportHtml">HTML (one file)</span></label>
+      <label><input type="radio" name="export-format" value="markdown"> <span data-i18n="exportMarkdown">Markdown (per article)</span></label>
+      <div class="dialog-actions">
+        <button type="button" id="btn-export-apply" class="btn-primary" data-i18n="exportBtn">Export</button>
+        <button value="cancel" class="btn-link" data-i18n="cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog">
+    <form method="dialog">
+      <p id="confirm-message"></p>
+      <div class="dialog-actions">
+        <button type="button" id="btn-confirm-yes" class="btn-primary" data-i18n="confirmYes">Yes</button>
+        <button value="cancel" class="btn-link" data-i18n="cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="library.js"></script>
+</body>
+</html>

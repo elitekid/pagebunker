@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>PageBunker</title>
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="reader.css">
+</head>
+<body>
+  <header class="reader-header">
+    <nav class="reader-nav">
+      <a id="link-library" href="../library/library.html" data-i18n="openLibrary">Library</a>
+      <a id="link-original" href="#" target="_blank" rel="noopener noreferrer" data-i18n="openOriginal">Open original</a>
+      <button type="button" id="btn-show-images" class="btn" data-i18n="showImages">Show images</button>
+      <button type="button" id="btn-mark-read" class="btn primary" data-i18n="markRead">Mark as read</button>
+      <button type="button" id="btn-restore-body" class="btn hidden" data-i18n="restoreBody">Restore previous body</button>
+    </nav>
+    <div class="reader-controls">
+      <label>
+        <span data-i18n="fontSize">Font size</span>
+        <input type="range" id="font-size" min="14" max="28" step="1">
+      </label>
+      <label>
+        <span data-i18n="lineHeight">Line height</span>
+        <input type="range" id="line-height" min="1.2" max="2.2" step="0.1">
+      </label>
+      <label>
+        <span data-i18n="contentWidth">Width</span>
+        <input type="range" id="content-width" min="480" max="900" step="20">
+      </label>
+      <label>
+        <span data-i18n="theme">Theme</span>
+        <select id="theme">
+          <option value="auto" data-i18n="themeAuto">Auto</option>
+          <option value="light" data-i18n="themeLight">Light</option>
+          <option value="dark" data-i18n="themeDark">Dark</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main id="reader-main" class="reader-main">
+    <p id="loading" data-i18n="loading">Loading...</p>
+    <div id="notice-banner" class="notice-banner hidden" role="status">
+      <span id="notice-text"></span>
+      <button type="button" id="btn-notice-action" class="btn primary"></button>
+      <button type="button" id="btn-notice-dismiss" class="btn" data-i18n="dismiss">Dismiss</button>
+    </div>
+    <article id="article" class="hidden">
+      <header class="article-meta">
+        <h1 id="title"></h1>
+        <p id="meta-line" class="meta-line"></p>
+        <p id="read-time" class="read-time"></p>
+      </header>
+      <div id="content" class="article-content"></div>
+      <div id="read-sentinel" aria-hidden="true"></div>
+    </article>
+    <p id="error" class="hidden" role="alert"></p>
+  </main>
+
+  <script type="module" src="reader.js"></script>
+</body>
+</html>

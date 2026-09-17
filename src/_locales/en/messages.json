@@ -1,0 +1,515 @@
+{
+  "extName": {
+    "message": "PageBunker"
+  },
+  "extDescription": {
+    "message": "Save the full text of articles to your own computer, read offline, and search them later. No account, no server."
+  },
+  "actionTitle": {
+    "message": "Save this article"
+  },
+  "commandSave": {
+    "message": "Save this article"
+  },
+  "ctxSavePage": {
+    "message": "Save this article"
+  },
+  "ctxOpenLibrary": {
+    "message": "Open library"
+  },
+  "ctxUndoSave": {
+    "message": "Undo last save"
+  },
+  "badgeSaved": {
+    "message": "Saved"
+  },
+  "badgeSavedLinkOnly": {
+    "message": "Link only"
+  },
+  "badgeCannotSave": {
+    "message": "This page cannot be saved"
+  },
+  "badgeFillMismatch": {
+    "message": "The page address changed, so the body was not filled"
+  },
+  "fillBodyHint": {
+    "message": "Click PageBunker save on the original tab to fill the body"
+  },
+  "badgeFailed": {
+    "message": "Save failed"
+  },
+  "badgePageChanged": {
+    "message": "Page changed, try again"
+  },
+  "badgeExists": {
+    "message": "Saved"
+  },
+  "badgeExistsTip": {
+    "message": "Already saved: $1$",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeUpdated": {
+    "message": "Updated"
+  },
+  "badgeBodyKept": {
+    "message": "Kept existing body"
+  },
+  "undoNone": {
+    "message": "Nothing to undo"
+  },
+  "undoExpired": {
+    "message": "Undo expired (1 minute)"
+  },
+  "undoDone": {
+    "message": "Last save undone"
+  },
+  "untitled": {
+    "message": "Untitled"
+  },
+  "settingsTitle": {
+    "message": "PageBunker Settings"
+  },
+  "readingOptions": {
+    "message": "Reading"
+  },
+  "autoMarkRead": {
+    "message": "Mark as read when I reach the end"
+  },
+  "autoMarkReadHint": {
+    "message": "Requires scrolling and a few seconds on the page."
+  },
+  "imageOptions": {
+    "message": "Images"
+  },
+  "showImagesDefault": {
+    "message": "Show images by default"
+  },
+  "showImagesDefaultHint": {
+    "message": "When off, images load only when you tap Show images in an article."
+  },
+  "backupOptions": {
+    "message": "Backup"
+  },
+  "autoFileBackup": {
+    "message": "Automatic file backup"
+  },
+  "autoFileBackupHint": {
+    "message": "Saves a backup file to your Downloads folder."
+  },
+  "manualBackup": {
+    "message": "Export full backup"
+  },
+  "manualBackupHint": {
+    "message": "Download all articles as a backup file."
+  },
+  "comingSoon": {
+    "message": "Coming soon"
+  },
+  "readerOptions": {
+    "message": "Reader"
+  },
+  "fontSize": {
+    "message": "Font size"
+  },
+  "lineHeight": {
+    "message": "Line height"
+  },
+  "contentWidth": {
+    "message": "Width"
+  },
+  "theme": {
+    "message": "Theme"
+  },
+  "themeAuto": {
+    "message": "Auto"
+  },
+  "themeLight": {
+    "message": "Light"
+  },
+  "themeDark": {
+    "message": "Dark"
+  },
+  "openLibrary": {
+    "message": "Open library"
+  },
+  "openOriginal": {
+    "message": "Open original"
+  },
+  "markRead": {
+    "message": "Mark as read"
+  },
+  "restoreBody": {
+    "message": "Restore previous body"
+  },
+  "showImages": {
+    "message": "Show images"
+  },
+  "hideImages": {
+    "message": "Hide images"
+  },
+  "libraryTitle": {
+    "message": "Library"
+  },
+  "libraryEmpty": {
+    "message": "No saved articles yet."
+  },
+  "loading": {
+    "message": "Loading..."
+  },
+  "articleNotFound": {
+    "message": "Article not found."
+  },
+  "minRead": {
+    "message": "$1$ min read",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "save": {
+    "message": "Save"
+  },
+  "saved": {
+    "message": "Saved"
+  },
+  "saveFailed": {
+    "message": "Could not save settings"
+  },
+  "searchPlaceholder": {
+    "message": "Search articles"
+  },
+  "sortNewest": {
+    "message": "Newest"
+  },
+  "sortOldest": {
+    "message": "Oldest"
+  },
+  "sortShortest": {
+    "message": "Shortest"
+  },
+  "allTags": {
+    "message": "All tags"
+  },
+  "selectMode": {
+    "message": "Select"
+  },
+  "cancelSelect": {
+    "message": "Cancel"
+  },
+  "tabUnread": {
+    "message": "To read"
+  },
+  "tabRead": {
+    "message": "Read"
+  },
+  "tabArchive": {
+    "message": "Archive"
+  },
+  "tabTrash": {
+    "message": "Trash"
+  },
+  "moveArchive": {
+    "message": "Archive"
+  },
+  "moveTrash": {
+    "message": "Delete"
+  },
+  "restore": {
+    "message": "Restore"
+  },
+  "addTags": {
+    "message": "Add tags"
+  },
+  "tagPlaceholder": {
+    "message": "tag1, tag2"
+  },
+  "apply": {
+    "message": "Apply"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "selectedCount": {
+    "message": "$1$ selected",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "loadMore": {
+    "message": "Load more"
+  },
+  "importBtn": {
+    "message": "Import"
+  },
+  "exportBtn": {
+    "message": "Export"
+  },
+  "importTitle": {
+    "message": "Import"
+  },
+  "importApply": {
+    "message": "Import"
+  },
+  "importUndo": {
+    "message": "Undo import"
+  },
+  "importUnsupported": {
+    "message": "Unsupported file format."
+  },
+  "importTooLarge": {
+    "message": "File exceeds 50 MB limit."
+  },
+  "importDecodeError": {
+    "message": "Could not read file (UTF-8 required)."
+  },
+  "importStats": {
+    "message": "New: $1$, duplicates: $2$, possible duplicates: $3$, errors: $4$",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      },
+      "2": {
+        "content": "$2"
+      },
+      "3": {
+        "content": "$3"
+      },
+      "4": {
+        "content": "$4"
+      }
+    }
+  },
+  "importWillAdd": {
+    "message": "Will import $1$ articles.",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "importErrors": {
+    "message": "Error examples:"
+  },
+  "importUndoConfirm": {
+    "message": "Delete all articles from this import? Articles you edited will also be removed."
+  },
+  "importInterrupted": {
+    "message": "Import paused at $1$ of $2$.",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      },
+      "2": {
+        "content": "$2"
+      }
+    }
+  },
+  "importResume": {
+    "message": "Resume"
+  },
+  "importCancelJob": {
+    "message": "Cancel import"
+  },
+  "importCancelConfirm": {
+    "message": "Delete articles imported so far from this job?"
+  },
+  "importReselectFile": {
+    "message": "Select the same file again to resume."
+  },
+  "exportTitle": {
+    "message": "Export selected"
+  },
+  "exportHtml": {
+    "message": "HTML (one file)"
+  },
+  "exportMarkdown": {
+    "message": "Markdown (per article)"
+  },
+  "confirmYes": {
+    "message": "Yes"
+  },
+  "backupDeferred": {
+    "message": "Backup paused during import"
+  },
+  "onboardingTitle": {
+    "message": "Welcome to PageBunker"
+  },
+  "onboardingPin": {
+    "message": "Pin the toolbar icon for quick saves."
+  },
+  "onboardingSave": {
+    "message": "Open any article and click the icon to save."
+  },
+  "onboardingImport": {
+    "message": "Import from Pocket"
+  },
+  "onboardingDismiss": {
+    "message": "Got it"
+  },
+  "bodyNoneImported": {
+    "message": "No body"
+  },
+  "bodyFailedIframe": {
+    "message": "Body in iframe"
+  },
+  "bodyLinkOnly": {
+    "message": "Link only"
+  },
+  "bodyTooLarge": {
+    "message": "Too large"
+  },
+  "fillBody": {
+    "message": "Fill body"
+  },
+  "fillBodySave": {
+    "message": "Save body again"
+  },
+  "refreshBody": {
+    "message": "Refresh body"
+  },
+  "confirmRefreshBody": {
+    "message": "Save a new body from the original page? The previous body can be restored once."
+  },
+  "alreadySavedPrompt": {
+    "message": "Already saved. Save body again from the original page?"
+  },
+  "openOriginalFirst": {
+    "message": "Open the original page and click the toolbar icon."
+  },
+  "bodyNoneImportedHint": {
+    "message": "This article has no body yet. Open the original and save."
+  },
+  "bodyFailedIframeHint": {
+    "message": "Could not extract body (iframe). Open the original and save again."
+  },
+  "fillBodyWaiting": {
+    "message": "Original opened. Click the toolbar icon on that page."
+  },
+  "dismiss": {
+    "message": "Dismiss"
+  },
+  "backupRunning": {
+    "message": "Backing up..."
+  },
+  "backupDone": {
+    "message": "Backup complete"
+  },
+  "backupFailed": {
+    "message": "Backup failed"
+  },
+  "backupStatusOk": {
+    "message": "Last backup: $1$",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "backupStatusPending": {
+    "message": "Backup scheduled"
+  },
+  "backupStatusError": {
+    "message": "Backup error — try again in Settings"
+  },
+  "backupError_canceled": {
+    "message": "Backup canceled"
+  },
+  "backupError_unknown": {
+    "message": "Backup failed — try again in Settings"
+  },
+  "backupError_name": {
+    "message": "Backup failed — file name error"
+  },
+  "backupError_stalled": {
+    "message": "Backup stalled — will retry automatically"
+  },
+  "backupStatusNever": {
+    "message": "No file backup yet"
+  },
+  "backupLocationNotice": {
+    "message": "Backup files are saved to Downloads/$1$",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "restorePrompt": {
+    "message": "This is a PageBunker backup file. Choose merge or replace restore."
+  },
+  "restoreMerge": {
+    "message": "Merge restore"
+  },
+  "restoreReplace": {
+    "message": "Replace restore"
+  },
+  "restoreReplaceConfirm": {
+    "message": "Replace all existing data? A protection snapshot is created first; you can undo once."
+  },
+  "restoreFailed": {
+    "message": "Restore failed: $1$",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "restoreSnapshotBlocked": {
+    "message": "Could not create a protection snapshot. Use merge restore or export a full backup first."
+  },
+  "restoreUndoReplace": {
+    "message": "Undo replace restore"
+  },
+  "restoreUndoReplaceAt": {
+    "message": "Undo replace restore ($1$)",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "restoreUndoReplaceConfirm": {
+    "message": "Restore data from before the replace? This can only be done once."
+  },
+  "exportDocTitle": {
+    "message": "PageBunker Export"
+  },
+  "exportImageLabel": {
+    "message": "Image"
+  },
+  "onboardingShortcut": {
+    "message": "You can also save with $1$.",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "onboardingShortcutUnset": {
+    "message": "The shortcut is empty because another extension uses it. Set one at $1$.",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "onboardingShortcutUnsetFirefox": {
+    "message": "The shortcut is empty. Set one in Add-ons Manager, gear menu, \"Manage Extension Shortcuts\"."
+  },
+  "reviewPromptBody": {
+    "message": "If PageBunker has been useful, a short store review helps others find it."
+  },
+  "reviewLeave": {
+    "message": "Leave a review"
+  },
+  "reviewOk": {
+    "message": "That's fine"
+  }
+}

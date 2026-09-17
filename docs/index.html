@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PageBunker - Save articles. Read offline.</title>
+<link rel="icon" href="assets/icon128.png">
+<meta name="description" content="PageBunker saves the article you are reading to your computer, lets you read offline, search full text, and keeps automatic backups in your Downloads folder. No account, no server.">
+<style>
+  :root { --ink:#1b1f24; --muted:#5b6470; --line:#e3e6ea; --bg:#fafbfc; --card:#fff; --link:#1f5fbf; --navy:#16213a; --navy2:#2b3a55; --accent:#3fc8a8; --warn:#b3540b; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:-apple-system,"Segoe UI",Inter,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; }
+  .wrap { max-width:960px; margin:0 auto; padding:0 20px; }
+  nav { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:var(--card); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  nav .brand { display:flex; align-items:center; gap:10px; font-weight:700; text-decoration:none; color:var(--ink); }
+  nav .brand img { width:28px; height:28px; border-radius:7px; }
+  nav .links a { margin-left:16px; color:var(--muted); text-decoration:none; font-size:14px; }
+  nav .links a:hover { color:var(--ink); }
+  .lang { border:1px solid var(--line); border-radius:999px; padding:3px 10px; font-size:13px; background:#fff; cursor:pointer; margin-left:16px; }
+  header.hero { background:radial-gradient(circle at 15% 15%, var(--navy2) 0, var(--navy) 60%); color:#fff; padding:64px 20px 56px; }
+  .hero .wrap { display:grid; grid-template-columns:1.2fr 1fr; gap:40px; align-items:center; }
+  .hero h1 { font-size:44px; line-height:1.15; margin:0 0 14px; letter-spacing:-1px; }
+  .hero p.lead { font-size:18px; color:#dbe3f0; margin:0 0 22px; }
+  .hero .cta { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  .btn { display:inline-block; padding:11px 18px; border-radius:8px; text-decoration:none; font-weight:600; font-size:15px; border:1px solid transparent; }
+  .btn.accent { background:var(--accent); color:var(--navy); }
+  .btn.ghost { border-color:#7d8aa8; color:#fff; }
+  .btn.ghost:hover { background:rgba(255,255,255,.08); }
+  .store-note { display:inline-block; padding:10px 14px; border-radius:8px; background:rgba(63,200,168,.15); border:1px solid rgba(63,200,168,.35); color:#c8f0e6; font-size:14px; }
+  .hero img.shot { width:100%; height:auto; border-radius:10px; box-shadow:0 20px 50px rgba(0,0,0,.45); }
+  .hero small { display:block; margin-top:12px; color:#9fb0cc; font-size:13px; }
+  section { padding:52px 0; }
+  section + section { border-top:1px solid var(--line); }
+  h2 { font-size:28px; margin:0 0 8px; letter-spacing:-.5px; }
+  .sub { color:var(--muted); margin:0 0 26px; font-size:16px; }
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .step { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .step .n { display:inline-grid; place-items:center; width:32px; height:32px; border-radius:50%; background:var(--navy); color:var(--accent); font-weight:700; margin-bottom:10px; }
+  .step h3 { margin:0 0 6px; font-size:17px; }
+  .step p { margin:0; color:var(--muted); font-size:15px; }
+  .show { display:grid; grid-template-columns:1fr 1.35fr; gap:36px; align-items:center; margin:44px 0; }
+  .show.rev .show-text { order:2; }
+  .show.rev { grid-template-columns:1.35fr 1fr; }
+  .show.wide { grid-template-columns:1fr; gap:18px; }
+  .show.wide .show-text { max-width:720px; }
+  .show-img { text-align:center; }
+  .show h3 { font-size:21px; margin:0 0 10px; letter-spacing:-.3px; }
+  .show p { margin:0; color:var(--muted); font-size:16px; }
+  .show-img img { display:block; width:auto; max-width:100%; height:auto; margin:0 auto; border-radius:12px; border:1px solid var(--line); box-shadow:0 12px 32px rgba(22,33,58,.12); background:#fff; }
+  .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+  .feat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; }
+  .feat h3 { margin:0 0 6px; font-size:16px; }
+  .feat p { margin:0; color:var(--muted); font-size:14px; }
+  table { width:100%; border-collapse:collapse; background:var(--card); font-size:14px; }
+  th, td { border:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top; }
+  th { background:#f1f3f6; }
+  .honest { border-left:4px solid var(--warn); background:#fff6ee; padding:12px 16px; border-radius:6px; margin-top:18px; font-size:15px; }
+  details { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 16px; margin:10px 0; }
+  summary { cursor:pointer; font-weight:600; }
+  details p { margin:8px 0 0; color:var(--muted); }
+  footer { color:var(--muted); font-size:13px; padding:34px 20px 54px; border-top:1px solid var(--line); }
+  footer a { color:var(--link); }
+  code { background:#f1f3f6; padding:1px 6px; border-radius:4px; font-size:13px; }
+  body:not(.ko) [data-lang="ko"] { display:none !important; }
+  body.ko [data-lang="en"] { display:none !important; }
+  @media (max-width:760px) { .show, .show.rev { grid-template-columns:1fr; gap:16px; margin:32px 0; } .show.rev .show-text { order:0; } .hero .wrap { grid-template-columns:1fr; } .steps { grid-template-columns:1fr; } .hero h1 { font-size:34px; } nav .links a:not(.lang) { display:none; } }
+</style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="#"><img src="assets/icon128.png" alt="">PageBunker</a>
+  <div class="links">
+    <a href="#how" data-lang="en">How it works</a><a href="#how" data-lang="ko">작동 방식</a>
+    <a href="#features" data-lang="en">Features</a><a href="#features" data-lang="ko">기능</a>
+    <a href="#data" data-lang="en">Your data</a><a href="#data" data-lang="ko">데이터</a>
+    <a href="#faq" data-lang="en">FAQ</a><a href="#faq" data-lang="ko">자주 묻는 질문</a>
+    <a href="privacy/" data-lang="en">Privacy</a><a href="privacy/" data-lang="ko">처리방침</a>
+    <button class="lang" id="lang-toggle" type="button">한국어</button>
+  </div>
+</nav>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <h1 data-lang="en">Save articles.<br>Read offline.</h1>
+    <h1 data-lang="ko">글을 저장하고,<br>오프라인에서 읽습니다.</h1>
+    <p class="lead" data-lang="en">Save articles without ads or menus. Read them offline, search full text, and keep automatic backups in your Downloads folder. No account, no server.</p>
+    <p class="lead" data-lang="ko">광고와 메뉴를 뺀 글을 저장하고 인터넷 없이 읽습니다. 본문 전체 검색과 다운로드 폴더 자동 백업을 지원합니다. 가입·서버 없음.</p>
+    <div class="cta">
+      <span class="store-note" data-lang="en">Store listings for Chrome, Edge, and Firefox are in review. Install links will be added here once they are live.</span>
+      <span class="store-note" data-lang="ko">크롬·엣지·파이어폭스 스토어 심사 중입니다. 출시되면 설치 링크를 여기에 올립니다.</span>
+      <a class="btn ghost" href="https://github.com/elitekid/pagebunker">GitHub</a>
+    </div>
+    <small data-lang="en">Free. Open source. English and Korean UI.</small>
+    <small data-lang="ko">무료. 오픈소스. 영어·한국어 UI.</small>
+  </div>
+  <div>
+    <img class="shot" src="assets/library-en.png" width="1280" height="800" alt="PageBunker library with saved articles" data-lang="en">
+    <img class="shot" src="assets/library-ko.png" width="1280" height="800" alt="저장된 글이 있는 PageBunker 보관함" data-lang="ko">
+  </div>
+</div></header>
+
+<section id="how"><div class="wrap">
+  <h2 data-lang="en">What happens when you save</h2><h2 data-lang="ko">저장하면 일어나는 일</h2>
+  <p class="sub" data-lang="en">Three things, in order. The third one is why PageBunker writes to your Downloads folder.</p>
+  <p class="sub" data-lang="ko">세 가지가 순서대로 일어납니다. 세 번째가 다운로드 폴더에 백업을 남기는 이유입니다.</p>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><h3 data-lang="en">The article is saved</h3><h3 data-lang="ko">글이 저장됩니다</h3><p data-lang="en">Click the toolbar button, press Alt+Shift+L (Option+Shift+L on Mac), or right-click and choose "Save this article". Title, author, date, and body are extracted; ads, menus, and comments are left out.</p><p data-lang="ko">툴바 버튼, Alt+Shift+L(맥은 Option+Shift+L), 또는 우클릭 메뉴 "이 글 저장"으로 저장합니다. 제목·작성자·날짜·본문을 뽑고 광고·메뉴·댓글은 빼고 저장합니다.</p></div>
+    <div class="step"><span class="n">2</span><h3 data-lang="en">It lands in your library</h3><h3 data-lang="ko">보관함에 들어갑니다</h3><p data-lang="en">To read, Read, Archive, and Trash tabs organize your articles. Sort, tag, search full text, and open a clean reader that works offline.</p><p data-lang="ko">읽을 글, 읽은 글, 보관, 휴지통 탭으로 정리합니다. 정렬·태그·본문 검색이 되고, 오프라인에서도 읽을 수 있는 읽기 화면이 열립니다.</p></div>
+    <div class="step"><span class="n">3</span><h3 data-lang="en">A backup is written</h3><h3 data-lang="ko">백업이 기록됩니다</h3><p data-lang="en">When your articles change, PageBunker writes pagebunker-latest.json to Downloads/PageBunker. Once a day a dated file is added, keeping the latest 7. The browser keeps the 3 most recent copies as well.</p><p data-lang="ko">글이 바뀌면 다운로드/PageBunker 폴더에 pagebunker-latest.json을 씁니다. 하루 한 번 날짜 파일을 만들고 최근 7개까지 남깁니다. 브라우저 안에도 최근 사본 3개를 보관합니다.</p></div>
+  </div>
+</div></section>
+
+<section id="why"><div class="wrap">
+  <h2 data-lang="en">Why a file on disk</h2><h2 data-lang="ko">왜 디스크에 파일로 남기나</h2>
+  <p data-lang="en">Most read-later tools keep your list only inside the browser's extension storage. That storage disappears when the extension is removed, the profile is reset, or browser data is cleared. PageBunker treats browser storage as working memory and the file in your Downloads folder as the copy you own. Reinstall, choose restore from backup, and your library is back.</p>
+  <p data-lang="ko">대부분의 나중에 읽기 도구는 목록을 브라우저 확장 저장소 안에만 둡니다. 확장을 지우거나 프로필을 초기화하거나 브라우저 데이터를 정리하면 사라집니다. PageBunker는 브라우저 저장소를 작업 공간으로 보고, 다운로드 폴더의 파일을 사용자가 소유한 사본으로 봅니다. 다시 설치하고 백업 파일로 복원하면 보관함이 돌아옵니다.</p>
+  <div class="honest" data-lang="en"><b>What it does not do.</b> A failing disk or a deleted Downloads folder is not covered. PageBunker makes losing your library much less likely. It does not make it impossible. Copy backup files elsewhere if that matters to you.</div>
+  <div class="honest" data-lang="ko"><b>못 하는 것도 있습니다.</b> 디스크 고장이나 다운로드 폴더 삭제는 막지 못합니다. PageBunker는 글을 잃을 가능성을 크게 줄여 주는 도구이지, 불가능하게 만드는 도구는 아닙니다. 필요하면 백업 파일을 다른 곳에 복사해 두세요.</div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <h2 data-lang="en">Features</h2><h2 data-lang="ko">기능</h2>
+  <p class="sub" data-lang="en">Real screens from the extension, not mockups.</p><p class="sub" data-lang="ko">모두 확장의 실제 화면입니다.</p>
+  <div class="show wide">
+    <div class="show-text"><h3 data-lang="en">Your library at a glance</h3><h3 data-lang="ko">한눈에 보는 보관함</h3><p data-lang="en">To read, Read, Archive, and Trash. Sort by date or length, add tags, and select multiple articles at once. Articles in Trash are deleted automatically after 30 days.</p><p data-lang="ko">읽을 글, 읽은 글, 보관, 휴지통. 날짜·길이로 정렬하고, 태그를 붙이고, 여러 글을 한꺼번에 선택할 수 있습니다. 휴지통의 글은 30일 후 자동으로 삭제됩니다.</p></div>
+    <div class="show-img"><img src="assets/library-en.png" width="1280" height="800" loading="lazy" alt="PageBunker library" data-lang="en"><img src="assets/library-ko.png" width="1280" height="800" loading="lazy" alt="PageBunker 보관함" data-lang="ko"></div>
+  </div>
+  <div class="show rev">
+    <div class="show-text"><h3 data-lang="en">Search the full text</h3><h3 data-lang="ko">본문 전체 검색</h3><p data-lang="en">Search titles, sites, tags, and full article text in English and Korean. Matching passages are highlighted in the results.</p><p data-lang="ko">제목, 사이트, 태그, 본문 전체를 한국어와 영어로 검색합니다. 결과에서 일치하는 구절이 강조됩니다.</p></div>
+    <div class="show-img"><img src="assets/search-en.png" width="1280" height="800" loading="lazy" alt="Full-text search in PageBunker" data-lang="en"><img src="assets/search-ko.png" width="1280" height="800" loading="lazy" alt="PageBunker 본문 검색" data-lang="ko"></div>
+  </div>
+  <div class="show">
+    <div class="show-text"><h3 data-lang="en">A clean reader, offline</h3><h3 data-lang="ko">깨끗한 읽기 화면, 오프라인</h3><p data-lang="en">Adjust font size, line spacing, and width. Light and dark themes. Remembers where you stopped reading. Marks an article as read when you reach the end; you can turn this off. Images are not loaded by default — click "Show images" or turn them on in settings.</p><p data-lang="ko">글자 크기, 줄간격, 폭을 조절합니다. 밝은·어두운 테마. 읽던 위치를 기억하고, 끝까지 읽으면 읽음으로 표시합니다(끌 수 있음). 이미지는 기본으로 불러오지 않습니다. "이미지 보기"를 누르거나 설정에서 켤 수 있습니다.</p></div>
+    <div class="show-img"><img src="assets/reader-en.png" width="1280" height="800" loading="lazy" alt="PageBunker reader in dark theme" data-lang="en"><img src="assets/reader-ko.png" width="1280" height="800" loading="lazy" alt="어두운 테마의 PageBunker 읽기 화면" data-lang="ko"></div>
+  </div>
+  <div class="show rev">
+    <div class="show-text"><h3 data-lang="en">Light theme too</h3><h3 data-lang="ko">밝은 테마도 지원</h3><p data-lang="en">The reader follows your chosen theme. Saved articles still open without an internet connection, even after the original page is deleted.</p><p data-lang="ko">읽기 화면은 고른 테마를 따릅니다. 저장한 글은 인터넷이 끊겨도, 원문이 삭제돼도 읽을 수 있습니다.</p></div>
+    <div class="show-img"><img src="assets/reader-light-en.png" width="1280" height="800" loading="lazy" alt="PageBunker reader in light theme" data-lang="en"><img src="assets/reader-light-ko.png" width="1280" height="800" loading="lazy" alt="밝은 테마의 PageBunker 읽기 화면" data-lang="ko"></div>
+  </div>
+  <div class="show">
+    <div class="show-text"><h3 data-lang="en">Import with a preview</h3><h3 data-lang="ko">미리보기가 있는 가져오기</h3><p data-lang="en">Pocket CSV export (unzip the downloaded file and choose the CSV), Pocket legacy HTML export, Instapaper CSV, and browser bookmarks HTML. Preview before importing. Each import can be undone as a whole. Imported items arrive as links; open the original page and save it to fill in the article body.</p><p data-lang="ko">Pocket 내보내기 CSV(압축을 풀고 CSV 선택), Pocket 옛 HTML, Instapaper CSV, 브라우저 북마크 HTML. 미리보기로 확인한 뒤 가져오며, 가져오기 작업 단위로 되돌릴 수 있습니다. 가져온 글은 링크만 들어옵니다. 원문을 열어 저장하면 본문이 채워집니다.</p></div>
+    <div class="show-img"><img src="assets/import-en.png" width="1280" height="800" loading="lazy" alt="Import preview in PageBunker" data-lang="en"><img src="assets/import-ko.png" width="1280" height="800" loading="lazy" alt="PageBunker 가져오기 미리보기" data-lang="ko"></div>
+  </div>
+  <div class="show rev">
+    <div class="show-text"><h3 data-lang="en">Reading and backup settings</h3><h3 data-lang="ko">읽기·백업 설정</h3><p data-lang="en">Turn auto mark-as-read on or off, control image loading, and see where backup files are written. Export selected articles as HTML or Markdown.</p><p data-lang="ko">끝까지 읽으면 읽음 표시, 이미지 불러오기, 백업 파일 위치 등을 설정합니다. 선택한 글을 HTML 또는 마크다운으로 내보냅니다.</p></div>
+    <div class="show-img"><img src="assets/options-en.png" width="1280" height="800" loading="lazy" alt="PageBunker settings" data-lang="en"><img src="assets/options-ko.png" width="1280" height="800" loading="lazy" alt="PageBunker 설정" data-lang="ko"></div>
+  </div>
+  <div class="features">
+    <div class="feat"><h3 data-lang="en">No account</h3><h3 data-lang="ko">계정 없음</h3><p data-lang="en">No sign-up, no server, no analytics, no tracking code.</p><p data-lang="ko">가입, 서버, 분석, 추적 코드가 없습니다.</p></div>
+    <div class="feat"><h3 data-lang="en">Minimal permissions</h3><h3 data-lang="ko">최소 권한</h3><p data-lang="en">Reads only the tab where you use PageBunker. No host permissions for all websites.</p><p data-lang="ko">PageBunker를 사용한 탭의 글만 읽습니다. 모든 사이트 접근 권한은 요청하지 않습니다.</p></div>
+    <div class="feat"><h3 data-lang="en">Export</h3><h3 data-lang="ko">내보내기</h3><p data-lang="en">Selected articles as one HTML file or one Markdown file per article.</p><p data-lang="ko">선택한 글을 HTML 파일 하나로, 또는 글마다 마크다운 파일로 내보냅니다.</p></div>
+    <div class="feat"><h3 data-lang="en">Restore after reinstall</h3><h3 data-lang="ko">재설치 후 복원</h3><p data-lang="en">Merge or replace from pagebunker-latest.json. A replace can be undone once.</p><p data-lang="ko">pagebunker-latest.json으로 병합·교체 복원. 교체는 한 번 되돌릴 수 있습니다.</p></div>
+    <div class="feat"><h3 data-lang="en">English and Korean</h3><h3 data-lang="ko">영어와 한국어</h3><p data-lang="en">The interface follows your browser language. Chrome, Edge, and Firefox.</p><p data-lang="ko">화면 언어는 브라우저 언어를 따릅니다. 크롬, 엣지, 파이어폭스.</p></div>
+    <div class="feat"><h3 data-lang="en">Free and open source</h3><h3 data-lang="ko">무료·오픈소스</h3><p data-lang="en">No paid tier. Source code on GitHub.</p><p data-lang="ko">유료 등급 없음. 소스 코드는 GitHub에 공개됩니다.</p></div>
+  </div>
+</div></section>
+
+<section id="data"><div class="wrap">
+  <h2 data-lang="en">Where your data lives, and what the extension can touch</h2><h2 data-lang="ko">데이터가 어디에 있고, 확장이 무엇에 손댈 수 있나</h2>
+  <table>
+    <tr><th data-lang="en">Place</th><th data-lang="ko">위치</th><th data-lang="en">What is there</th><th data-lang="ko">무엇이 있나</th></tr>
+    <tr><td data-lang="en">Inside the browser</td><td data-lang="ko">브라우저 안</td><td data-lang="en">Saved articles, tags, reading positions, settings, and the 3 most recent backup copies. Removed if the extension is uninstalled.</td><td data-lang="ko">저장한 글, 태그, 읽던 위치, 설정, 최근 백업 사본 3개. 확장을 지우면 함께 사라집니다.</td></tr>
+    <tr><td data-lang="en">Downloads/PageBunker/</td><td data-lang="ko">다운로드/PageBunker/</td><td data-lang="en">pagebunker-latest.json, updated when articles change, plus a daily dated file (7 kept). Stays on disk no matter what happens to the extension.</td><td data-lang="ko">pagebunker-latest.json(글 변경 시 갱신)과 하루 한 번 날짜 파일(최근 7개). 확장에 무슨 일이 생겨도 디스크에 남습니다.</td></tr>
+    <tr><td data-lang="en">Anywhere else</td><td data-lang="ko">그 외</td><td data-lang="en">Nothing. No account, no server, no analytics, no network requests on its own.</td><td data-lang="ko">없음. 계정, 서버, 분석, 확장이 스스로 보내는 네트워크 요청이 전혀 없습니다.</td></tr>
+  </table>
+  <table style="margin-top:16px">
+    <tr><th data-lang="en">Permission</th><th data-lang="ko">권한</th><th data-lang="en">Why it is needed</th><th data-lang="ko">왜 필요한가</th></tr>
+    <tr><td data-lang="en">activeTab</td><td data-lang="ko">activeTab</td><td data-lang="en">Read the article only in the tab where you use PageBunker.</td><td data-lang="ko">PageBunker를 사용한 탭의 글만 읽습니다.</td></tr>
+    <tr><td data-lang="en">scripting</td><td data-lang="ko">scripting</td><td data-lang="en">Run the article extraction code in that tab.</td><td data-lang="ko">그 탭에서 본문 추출 코드를 실행합니다.</td></tr>
+    <tr><td data-lang="en">storage, unlimitedStorage</td><td data-lang="ko">storage, unlimitedStorage</td><td data-lang="en">Store saved articles and settings locally.</td><td data-lang="ko">저장한 글과 설정을 로컬에 보관합니다.</td></tr>
+    <tr><td data-lang="en">downloads</td><td data-lang="ko">downloads</td><td data-lang="en">Write backup and export files to your Downloads folder. Nothing is uploaded.</td><td data-lang="ko">백업·내보내기 파일을 다운로드 폴더에 씁니다. 어디로도 올리지 않습니다.</td></tr>
+    <tr><td data-lang="en">alarms</td><td data-lang="ko">alarms</td><td data-lang="en">Schedule backups and daily trash cleanup.</td><td data-lang="ko">백업을 예약하고 휴지통을 정리합니다.</td></tr>
+    <tr><td data-lang="en">contextMenus</td><td data-lang="ko">contextMenus</td><td data-lang="en">Add the right-click menu item for saving.</td><td data-lang="ko">저장용 우클릭 메뉴 항목을 추가합니다.</td></tr>
+    <tr><td data-lang="en">offscreen (Chrome and Edge only)</td><td data-lang="ko">offscreen (크롬·엣지만)</td><td data-lang="en">Build large backup files.</td><td data-lang="ko">큰 백업 파일을 만듭니다.</td></tr>
+  </table>
+  <p class="sub" style="margin-top:14px" data-lang="en">No host permissions. You can confirm the zero-network claim yourself: open developer tools, watch the Network tab, and use the extension. The list stays empty unless you open an original page or load images.</p>
+  <p class="sub" style="margin-top:14px" data-lang="ko">호스트 권한이 없습니다. 네트워크 요청이 없다는 건 직접 확인할 수 있습니다. 개발자 도구의 네트워크 탭을 열어 두고 확장을 써 보면, 원문 열기나 이미지 보기를 누르지 않는 한 목록이 비어 있습니다.</p>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <h2 data-lang="en">FAQ</h2><h2 data-lang="ko">자주 묻는 질문</h2>
+  <details><summary><span data-lang="en">I am moving from Pocket. Will my articles come with full text?</span><span data-lang="ko">Pocket에서 옮깁니다. 본문까지 같이 옮겨지나요?</span></summary><p data-lang="en">Pocket export files contain links, not article bodies. PageBunker imports them as links. Open each original page and save it to fill in the body, or save articles as you read them going forward.</p><p data-lang="ko">Pocket 내보내기 파일에는 링크만 있고 본문은 없습니다. PageBunker는 링크로 가져옵니다. 원문을 열어 저장하면 본문이 채워지거나, 앞으로 읽을 때마다 저장하면 됩니다.</p></details>
+  <details><summary><span data-lang="en">Why does Chrome warn about managing downloads at install?</span><span data-lang="ko">설치할 때 크롬이 다운로드를 관리한다고 경고하는 이유는?</span></summary><p data-lang="en">PageBunker uses the downloads permission to write backup and export files to your Downloads folder. Chrome shows "Manage your downloads" because of that permission. Everything stays on your computer; the extension makes no network requests on its own.</p><p data-lang="ko">PageBunker는 downloads 권한으로 백업·내보내기 파일을 다운로드 폴더에 씁니다. 그 권한 때문에 크롬에 "다운로드 관리" 경고가 표시됩니다. 모든 데이터는 컴퓨터 안에만 있고, 확장은 스스로 네트워크 요청을 하지 않습니다.</p></details>
+  <details><summary><span data-lang="en">What happens if I uninstall PageBunker?</span><span data-lang="ko">PageBunker를 지우면 저장한 글은 어떻게 되나요?</span></summary><p data-lang="en">The browser removes the extension's own storage, so the library inside the browser is gone. The JSON files in Downloads/PageBunker stay. Reinstall and restore from pagebunker-latest.json to get your library back.</p><p data-lang="ko">브라우저가 확장 저장소를 지우므로 브라우저 안의 보관함은 사라집니다. 다운로드/PageBunker 폴더의 JSON 파일은 남습니다. 다시 설치하고 pagebunker-latest.json으로 복원하면 보관함이 돌아옵니다.</p></details>
+  <details><summary><span data-lang="en">Are images saved offline?</span><span data-lang="ko">이미지도 오프라인으로 저장되나요?</span></summary><p data-lang="en">Text is saved and readable offline. Images are not loaded by default, so no request goes to the original site until you click "Show images" in an article or turn on image loading in settings. When you do load images, they are fetched from the original website and require an internet connection.</p><p data-lang="ko">글자는 저장되어 오프라인에서 읽을 수 있습니다. 이미지는 기본으로 불러오지 않으므로 "이미지 보기"를 누르거나 설정에서 켜기 전까지 원문 사이트에 요청하지 않습니다. 이미지를 불러올 때는 원문 사이트에서 받아 오며 인터넷이 필요합니다.</p></details>
+  <details><summary><span data-lang="en">Does it sync between computers?</span><span data-lang="ko">컴퓨터 사이에 동기화되나요?</span></summary><p data-lang="en">No. There is no server, so there is no sync. Copy the JSON file from Downloads/PageBunker to the other computer and restore it there.</p><p data-lang="ko">아니요. 서버가 없으니 동기화도 없습니다. 다운로드 폴더의 JSON 파일을 다른 컴퓨터로 복사해 거기서 복원하면 됩니다.</p></details>
+  <details><summary><span data-lang="en">Which browsers?</span><span data-lang="ko">어떤 브라우저를 지원하나요?</span></summary><p data-lang="en">Chrome, Edge (same package), and Firefox. Safari is not supported.</p><p data-lang="ko">크롬, 엣지(같은 패키지), 파이어폭스. 사파리는 지원하지 않습니다.</p></details>
+  <details><summary><span data-lang="en">Is it really free?</span><span data-lang="ko">정말 무료인가요?</span></summary><p data-lang="en">Yes, and open source. There is no paid tier and no account to create.</p><p data-lang="ko">네, 오픈소스입니다. 유료 등급도, 만들어야 할 계정도 없습니다.</p></details>
+</div></section>
+
+<footer><div class="wrap">
+  <span data-lang="en">PageBunker is open source. <a href="https://github.com/elitekid/pagebunker">Source code</a> · <a href="privacy/">Privacy policy</a> · <a href="https://github.com/elitekid/pagebunker/issues">Report a problem</a> · <a href="https://elitekid.github.io/tabbunker/">TabBunker</a> — close your tabs and keep a backup</span>
+  <span data-lang="ko">PageBunker는 오픈소스입니다. <a href="https://github.com/elitekid/pagebunker">소스 코드</a> · <a href="privacy/">개인정보 처리방침</a> · <a href="https://github.com/elitekid/pagebunker/issues">문제 신고</a> · <a href="https://elitekid.github.io/tabbunker/">TabBunker</a> — 탭은 닫고 백업은 남깁니다</span>
+</div></footer>
+<script>
+  const btn = document.getElementById('lang-toggle');
+  const apply = (ko) => { document.body.classList.toggle('ko', ko); document.documentElement.lang = ko ? 'ko' : 'en'; btn.textContent = ko ? 'English' : '한국어'; };
+  const saved = localStorage.getItem('pb-lang');
+  apply(saved ? saved === 'ko' : (navigator.language || '').toLowerCase().startsWith('ko'));
+  btn.addEventListener('click', () => { const ko = !document.body.classList.contains('ko'); apply(ko); localStorage.setItem('pb-lang', ko ? 'ko' : 'en'); });
+</script>
+</body>
+</html>
