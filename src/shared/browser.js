@@ -57,6 +57,7 @@ export const tabs = api.tabs
 export const windows = api.windows
   ? {
       getLastFocused: promisify(api.windows.getLastFocused, api.windows),
+      update: promisify(api.windows.update, api.windows),
     }
   : null;
 

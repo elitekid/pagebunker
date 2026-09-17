@@ -197,7 +197,32 @@ async function applySnapshotResult(snapRes) {
   }
 }
 
+// 자동 백업 다운로드 동안만 브라우저 다운로드 표시(버블·툴바 아이콘)를 숨긴다. 크롬·엣지 전용, 파이어폭스는 API 없음(TabBunker 1.1.0과 같음)
+async function setDownloadUi(enabled) {
+  const fn = browserApi.downloads?.setUiOptions;
+  if (typeof fn !== 'function') return;
+  try {
+    await fn.call(browserApi.downloads, { enabled });
+  } catch {
+    /* 권한 없음 등 */
+  }
+}
+
+// 진행 중인 백업 다운로드가 없으면 다운로드 표시를 되돌린다
+export async function restoreDownloadUiIfIdle() {
+  const state = await loadBackupState();
+  if (!state.inflight) await setDownloadUi(true);
+}
+
 async function handleBackupFailure(state, code, message) {
+  try {
+    await handleBackupFailureInner(state, code, message);
+  } finally {
+    await setDownloadUi(true);
+  }
+}
+
+async function handleBackupFailureInner(state, code, message) {
   const lastError = buildLastError(code, message);
   if (code === 'canceled') {
     await saveBackupState({
@@ -284,6 +309,7 @@ async function startDatedDownload(state, revision) {
   const { url } = blobResult;
   const filename = datedFilename();
   try {
+    await setDownloadUi(false);
     const id = await downloads.download({
       url,
       filename,
@@ -493,6 +519,7 @@ export async function runBackup(trigger = 'alarm') {
   const filename = `${BACKUP_SUBFOLDER}/${LATEST_FILENAME}`;
 
   try {
+    await setDownloadUi(false);
     const id = await downloads.download({
       url,
       filename,
@@ -520,6 +547,7 @@ export async function runBackup(trigger = 'alarm') {
     const items = await downloads.search({ id });
     if (items[0] && (items[0].state === 'complete' || items[0].state === 'interrupted')) {
       await settleDownload(items[0]);
+      await restoreDownloadUiIfIdle();
     }
     return loadBackupState();
   } catch (err) {
@@ -531,6 +559,7 @@ export async function runBackup(trigger = 'alarm') {
 
 export async function reconcileBackupStartup() {
   await reconcileInflight();
+  await restoreDownloadUiIfIdle();
   const state = await loadBackupState();
   const settings = await loadSettings(storage.local);
   const revision = await getDataRevision();
@@ -574,7 +603,10 @@ export function handleDownloadChanged(delta) {
   downloads.search({ id: delta.id }).then((items) => {
     const item = items[0];
     if (item && (item.state === 'complete' || item.state === 'interrupted')) {
-      settleDownload(item).catch(() => {});
+      settleDownload(item)
+        .catch(() => {})
+        .then(() => restoreDownloadUiIfIdle())
+        .catch(() => {});
     }
   });
 }

@@ -1,0 +1,369 @@
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+  font-size: 13px;
+}
+
+.popup {
+  width: 380px;
+  max-height: 580px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.popup-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px 8px;
+  flex-shrink: 0;
+}
+
+.popup-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.popup-status {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  flex-shrink: 0;
+}
+
+.status-dot.pending {
+  background: var(--warn);
+}
+
+.status-dot.off {
+  background: var(--muted);
+}
+
+.status-dot.writing {
+  background: var(--primary);
+}
+
+.status-dot.failed {
+  background: var(--danger);
+}
+
+.popup-toast {
+  margin: 0 10px 10px;
+  padding: 9px 10px;
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius);
+  color: var(--success-text);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.popup-toast.warn {
+  background: var(--warn-bg);
+  border-color: rgba(180, 83, 9, 0.35);
+  color: var(--warn);
+}
+
+.popup-toast .sp {
+  flex: 1;
+}
+
+.backup-notice {
+  margin: 0 10px 10px;
+  padding: 10px;
+  background: var(--warn-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.backup-notice-text {
+  margin: 0 0 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.backup-notice-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.backup-notice-actions .btn {
+  padding: 0.3rem 0.8rem;
+  font-size: 12px;
+}
+
+.save-sec {
+  margin: 0 10px 10px;
+  padding: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.save-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.save-heading {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.save-kicker {
+  margin: 0 0 3px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.save-note {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.save-btns {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.save-btn {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.saved-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--success-text);
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.section-label {
+  margin: 2px 14px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.popup-search {
+  margin: 0 10px 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.popup-search:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.group-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 0 10px;
+}
+
+.art-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.art-card:hover {
+  background: var(--card-hover);
+}
+
+.art-card:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.art-card.hl {
+  border-color: var(--primary);
+}
+
+.favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.art-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.art-title {
+  font-weight: 600;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.art-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.more-note {
+  margin: 0 14px 8px;
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.popup-ft {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 14px 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.link-btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.link-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  text-decoration: none;
+}
+
+.import-link {
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.groups-empty {
+  margin: 0 10px 10px;
+  padding: 18px 14px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.groups-empty-title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.groups-empty-body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.groups-nomatch {
+  margin: 4px 14px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--on-primary);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: pb-spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+
+@keyframes pb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hidden {
+  display: none !important;
+}

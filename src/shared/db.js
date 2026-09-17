@@ -812,6 +812,24 @@ export async function mergeBackupEntries(entries) {
  * @param {object[]} entries
  * @param {object} meta
  */
+/** 모든 글·본문·스냅샷·되돌리기 기록 삭제 (설정·백업 파일은 별도) */
+export async function wipeAllData() {
+  const db = await openDb();
+  const tx = db.transaction(
+    [STORE_ARTICLES, STORE_BODIES, STORE_TEXTS, STORE_META, STORE_SNAPSHOTS, STORE_UNDO],
+    'readwrite'
+  );
+  tx.objectStore(STORE_ARTICLES).clear();
+  tx.objectStore(STORE_BODIES).clear();
+  tx.objectStore(STORE_TEXTS).clear();
+  tx.objectStore(STORE_SNAPSHOTS).clear();
+  tx.objectStore(STORE_UNDO).clear();
+  const metaStore = tx.objectStore(STORE_META);
+  metaStore.put({ name: 'schemaVersion', value: SCHEMA_VERSION });
+  metaStore.put({ name: 'dataRevision', value: 0 });
+  await txDone(tx);
+}
+
 export async function replaceAllData(entries, meta = {}) {
   const db = await openDb();
   const tx = db.transaction(

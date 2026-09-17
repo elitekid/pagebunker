@@ -152,10 +152,16 @@
     "message": "Hide images"
   },
   "libraryTitle": {
-    "message": "Library"
+    "message": "PageBunker Library"
   },
   "libraryEmpty": {
-    "message": "No saved articles yet."
+    "message": "No saved articles yet"
+  },
+  "libraryEmptyTitle": {
+    "message": "No saved articles yet"
+  },
+  "libraryEmptyBody": {
+    "message": "Click the PageBunker toolbar icon to save an article. If you do not see it, pin the extension from the puzzle menu."
   },
   "loading": {
     "message": "Loading..."
@@ -506,10 +512,417 @@
   "reviewPromptBody": {
     "message": "If PageBunker has been useful, a short store review helps others find it."
   },
+  "reviewWrite": {
+    "message": "Write a review"
+  },
+  "reviewDismiss": {
+    "message": "Not now"
+  },
   "reviewLeave": {
-    "message": "Leave a review"
+    "message": "Write a review"
   },
   "reviewOk": {
-    "message": "That's fine"
+    "message": "Not now"
+  },
+  "reportProblem": {
+    "message": "Report a problem"
+  },
+  "sourceCode": {
+    "message": "Source code"
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "getStarted": {
+    "message": "Got it"
+  },
+  "libraryLoading": {
+    "message": "Loading library…"
+  },
+  "ctxOpenLibraryPage": {
+    "message": "Open PageBunker library"
+  },
+  "popupThisPage": {
+    "message": "This page"
+  },
+  "popupCannotSaveTitle": {
+    "message": "This page can't be saved"
+  },
+  "popupCannotSaveHint": {
+    "message": "Open an article you want to read, then try again."
+  },
+  "popupReasonBrowser": {
+    "message": "New-tab and browser pages can't be saved."
+  },
+  "popupReasonStore": {
+    "message": "The browser blocks access on extension store pages."
+  },
+  "popupReasonExtension": {
+    "message": "PageBunker pages can't be saved."
+  },
+  "popupSaveArticle": {
+    "message": "Save this article"
+  },
+  "popupSaving": {
+    "message": "Saving…"
+  },
+  "popupSaveHint": {
+    "message": "We'll save the article text without ads or menus."
+  },
+  "popupReadNow": {
+    "message": "Read now"
+  },
+  "popupSavedOn": {
+    "message": "saved $1$",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupResultSaved": {
+    "message": "Article saved"
+  },
+  "popupResultLinkOnly": {
+    "message": "Saved link only — couldn't extract the article body"
+  },
+  "popupResultUndone": {
+    "message": "Save undone"
+  },
+  "popupResultRefreshed": {
+    "message": "Body saved again from this page"
+  },
+  "popupUndoSave": {
+    "message": "Undo save"
+  },
+  "popupSavedSection": {
+    "message": "Saved articles"
+  },
+  "popupSearchPlaceholder": {
+    "message": "Search by title or site"
+  },
+  "popupEmptyTitle": {
+    "message": "No saved articles yet"
+  },
+  "popupEmptyBody": {
+    "message": "Saved articles appear here and you can read them offline."
+  },
+  "popupImportLink": {
+    "message": "Import from Pocket or Instapaper"
+  },
+  "popupMoreInLibrary": {
+    "message": "$1$ more in the full library",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupNoMatch": {
+    "message": "No articles match your search"
+  },
+  "popupManageFull": {
+    "message": "Open full library"
+  },
+  "popupBackupOk": {
+    "message": "File backup $value$",
+    "placeholders": {
+      "value": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupBackupPending": {
+    "message": "File backup pending ($value$)",
+    "placeholders": {
+      "value": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupBackupPendingNever": {
+    "message": "File backup pending"
+  },
+  "popupBackupWriting": {
+    "message": "File backup in progress"
+  },
+  "popupBackupFailed": {
+    "message": "File backup failed: $value$",
+    "placeholders": {
+      "value": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupBackupOff": {
+    "message": "File backup off"
+  },
+  "popupBackupNever": {
+    "message": "No file backup yet"
+  },
+  "popupBackupJustNow": {
+    "message": "just now"
+  },
+  "popupBackupMinutesAgo": {
+    "message": "$value$ min ago",
+    "placeholders": {
+      "value": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupBackupHoursAgo": {
+    "message": "$value$ hr ago",
+    "placeholders": {
+      "value": {
+        "content": "$1"
+      }
+    }
+  },
+  "backupFilePaused": {
+    "message": "File backup paused"
+  },
+  "backupErrAccess": {
+    "message": "access denied"
+  },
+  "backupErrDisk": {
+    "message": "disk full"
+  },
+  "backupErrName": {
+    "message": "file name error"
+  },
+  "backupErrStalled": {
+    "message": "stalled"
+  },
+  "backupErrUnknown": {
+    "message": "unknown error"
+  },
+  "popupBackupNotice": {
+    "message": "When you save articles, a backup file is written to the PageBunker folder in Downloads automatically, so you can recover even after reinstalling."
+  },
+  "popupBackupNoticeFirefox": {
+    "message": "In Firefox, the downloads list may open briefly when the file is saved."
+  },
+  "popupBackupNoticeSettings": {
+    "message": "Turn off in Settings"
+  },
+  "ptoastSaved": {
+    "message": "Saved to PageBunker"
+  },
+  "ptoastLinkOnly": {
+    "message": "Saved link only — couldn't extract the body"
+  },
+  "ptoastDuplicate": {
+    "message": "Already saved"
+  },
+  "ptoastCannotSave": {
+    "message": "This page can't be saved"
+  },
+  "ptoastReadNow": {
+    "message": "Read now"
+  },
+  "ptoastUndo": {
+    "message": "Undo save"
+  },
+  "popupResultFailed": {
+    "message": "Couldn't save this page. Try again after the page finishes loading."
+  },
+  "optionsAutoSaveHint": {
+    "message": "Changes save automatically"
+  },
+  "optionsSavedFlash": {
+    "message": "Saved"
+  },
+  "optionsSectionReading": {
+    "message": "Reading"
+  },
+  "optionsSectionImages": {
+    "message": "Images"
+  },
+  "optionsSectionFileBackup": {
+    "message": "File backup"
+  },
+  "optionsSectionImport": {
+    "message": "Import"
+  },
+  "optionsSectionShortcuts": {
+    "message": "Keyboard shortcuts"
+  },
+  "optionsSectionInfo": {
+    "message": "About"
+  },
+  "optionsSectionDelete": {
+    "message": "Delete data"
+  },
+  "optionsReaderThemeTitle": {
+    "message": "Reader theme"
+  },
+  "optionsReaderThemeDesc": {
+    "message": "Applies to the reading view."
+  },
+  "optionsAutoFileBackupTitle": {
+    "message": "Save backup files to Downloads"
+  },
+  "optionsBackupRecoverHint": {
+    "message": "You can recover from this file even after resetting the browser."
+  },
+  "optionsBackupStatusOk": {
+    "message": "Last saved $1 · You can recover from this file even after resetting the browser."
+  },
+  "optionsBackupStatusPending": {
+    "message": "Save pending ($1) · You can recover from this file even after resetting the browser."
+  },
+  "optionsBackupStatusPendingNever": {
+    "message": "Save pending · You can recover from this file even after resetting the browser."
+  },
+  "optionsBackupStatusWriting": {
+    "message": "Saving · You can recover from this file even after resetting the browser."
+  },
+  "optionsBackupStatusFailed": {
+    "message": "Save failed: $1 · You can recover from this file even after resetting the browser."
+  },
+  "optionsBackupStatusPaused": {
+    "message": "Paused because the download was canceled. Use Back up now to resume."
+  },
+  "optionsBackupStatusOff": {
+    "message": "File backup is off."
+  },
+  "optionsBackupStatusNever": {
+    "message": "No backup file yet · You can recover from this file even after resetting the browser."
+  },
+  "optionsBackupFolderName": {
+    "message": "Downloads/$1"
+  },
+  "optionsBackupNowTitle": {
+    "message": "Save right now"
+  },
+  "optionsExportBackupBtn": {
+    "message": "Export"
+  },
+  "optionsRestoreBackupTitle": {
+    "message": "Restore from backup file"
+  },
+  "optionsRestoreBackupDesc": {
+    "message": "Opens the library restore screen."
+  },
+  "optionsImportTitle": {
+    "message": "Import from Pocket, Instapaper, or bookmarks"
+  },
+  "optionsImportDesc": {
+    "message": "Opens the library import screen."
+  },
+  "optionsShortcutTitle": {
+    "message": "Save this article"
+  },
+  "optionsShortcutDesc": {
+    "message": "Saves the page you are reading."
+  },
+  "optionsShortcutChange": {
+    "message": "Change"
+  },
+  "optionsShortcutNone": {
+    "message": "Not set"
+  },
+  "optionsShortcutFirefoxHint": {
+    "message": "Change it in Add-ons Manager → gear menu → Manage Extension Shortcuts."
+  },
+  "optionsShortcutFallbackHint": {
+    "message": "Open your browser's extension shortcut settings to change this shortcut."
+  },
+  "optionsVersion": {
+    "message": "Version $1"
+  },
+  "optionsDeleteTitle": {
+    "message": "Delete saved articles and settings"
+  },
+  "optionsDeleteDesc": {
+    "message": "This cannot be undone. Backup files in Downloads are not deleted."
+  },
+  "optionsDeleteBtn": {
+    "message": "Delete all"
+  },
+  "deleteAllConfirm": {
+    "message": "Delete saved articles, settings, undo, and in-browser snapshots? Backup files in Downloads will remain."
+  },
+  "deleted": {
+    "message": "All data deleted."
+  },
+  "backupNow": {
+    "message": "Back up now"
+  },
+  "backupRestoreFromFile": {
+    "message": "Restore from backup file"
+  },
+  "backupRestoreHint": {
+    "message": "Choose pagebunker-latest.json or a dated backup file from your Downloads folder."
+  },
+  "vaultSnapshotLabel": {
+    "message": "In-browser copy"
+  },
+  "vaultSnapshotOk": {
+    "message": "$1"
+  },
+  "vaultSnapshotNone": {
+    "message": "None yet"
+  },
+  "dateToday": {
+    "message": "Today $1"
+  },
+  "dateYesterday": {
+    "message": "Yesterday $1"
+  },
+  "deleteAllConfirmCount": {
+    "message": "Delete all $count$ saved articles and your settings?",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "deleteAllRecoverable": {
+    "message": "Your backup file in Downloads/PageBunker is up to date, so you can restore from it later."
+  },
+  "deleteAllNotRecoverable": {
+    "message": "Your backup file doesn't include your latest articles, so they can't be restored after deleting. Back up first."
+  },
+  "deleteAllBackupNow": {
+    "message": "Back up now"
+  },
+  "deleteAllBackupOff": {
+    "message": "File backup is off, so deleted articles can't be restored. Use \"Export full backup\" above first."
+  },
+  "exportTitleSelected": {
+    "message": "Export $count$ selected articles",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "exportTitleList": {
+    "message": "Export $count$ articles in this list",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "exportNothing": {
+    "message": "No articles to export"
+  },
+  "filePickBtn": {
+    "message": "Choose file"
+  },
+  "filePickImportTitle": {
+    "message": "Choose a file to import"
+  },
+  "filePickImportBody": {
+    "message": "You can import a Pocket CSV, legacy Pocket HTML, Instapaper CSV, or browser bookmarks HTML file."
+  },
+  "filePickRestoreTitle": {
+    "message": "Choose a backup file to restore"
+  },
+  "filePickRestoreBody": {
+    "message": "Pick pagebunker-latest.json or a dated backup file from Downloads/PageBunker. You will see a preview first."
   }
 }

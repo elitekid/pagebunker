@@ -1,6 +1,12 @@
 // 보관함: 목록·검색·가져오기·보내기 (plan 4-5~4-7, T4.5~T5.5)
 
 import { browserApi, downloads, tabs } from '../shared/browser.js';
+import {
+  fileBackupStatusParts,
+  normalizeBackupStatus,
+  snapshotStatusParts,
+  statusLineHtml,
+} from '../shared/backup-status-ui.js';
 import { exportArticleMarkdown, exportArticlesHtml, setExportLabels } from '../shared/exporters.js';
 import { filterArticles, sortArticles } from '../shared/db.js';
 import {
@@ -12,7 +18,8 @@ import { extractSearchTextFromHtml } from '../shared/sanitize.js';
 import { extractPreviewFromDisplayText, highlightText } from '../shared/search-core.js';
 import { BODY_STATE } from '../shared/model.js';
 import { shouldShowReviewPrompt } from '../shared/review-prompt.js';
-import { getStoreReviewUrl } from '../shared/store-links.js';
+import { getStoreReviewUrl, ISSUES_URL } from '../shared/store-links.js';
+import { showToast } from '../shared/ui-toast.js';
 
 const PAGE_SIZE = 100;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -41,13 +48,15 @@ let searchTimer = null;
 let enrichedGen = -1;
 let enrichedUpTo = 0;
 let pendingImport = null;
+let exportIds = [];
 let pendingImportJobId = null;
 let lastImportJobId = null;
 let replaceUndoPtr = null;
 let highlightId = null;
 let settings = {};
-let firstRunDone = false;
-let backupState = null;
+let backupStatusPayload = null;
+let latestSnapshotAt = null;
+let articlesLoaded = false;
 
 function applyI18n() {
   const uiLang = browserApi.i18n.getUILanguage?.() || 'en';
@@ -63,6 +72,17 @@ function applyI18n() {
     const msg = browserApi.i18n.getMessage(key);
     if (msg) el.placeholder = msg;
   });
+  document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-aria');
+    const msg = browserApi.i18n.getMessage(key);
+    if (msg) el.setAttribute('aria-label', msg);
+  });
+}
+
+function notify(text, warn = false) {
+  const el = $('toast');
+  el.classList.toggle('warn', warn);
+  showToast(el, text);
 }
 
 function readerUrl(id) {
@@ -172,19 +192,38 @@ async function renderList() {
     if (seq !== renderSeq) return;
   }
   const listEl = $('list');
-  const emptyEl = $('empty');
+  const emptyState = $('empty-state');
+  const noMatch = $('search-nomatch');
+  const loadingEl = $('loading');
   const loadMoreEl = $('btn-load-more');
   listEl.innerHTML = '';
+
+  if (!articlesLoaded) {
+    loadingEl.classList.remove('hidden');
+    emptyState.classList.add('hidden');
+    noMatch.classList.add('hidden');
+    loadMoreEl.classList.add('hidden');
+    return;
+  }
+  loadingEl.classList.add('hidden');
+
+  if (!allArticles.length) {
+    emptyState.classList.remove('hidden');
+    noMatch.classList.add('hidden');
+    loadMoreEl.classList.add('hidden');
+    return;
+  }
+  emptyState.classList.add('hidden');
 
   const visible = getVisibleArticles();
   const slice = visible.slice(0, displayCount);
 
   if (!slice.length) {
-    emptyEl.classList.remove('hidden');
+    noMatch.classList.toggle('hidden', !searchResults);
     loadMoreEl.classList.add('hidden');
     return;
   }
-  emptyEl.classList.add('hidden');
+  noMatch.classList.add('hidden');
 
   for (const article of slice) {
     const li = document.createElement('li');
@@ -264,6 +303,7 @@ async function renderList() {
     if (article.bodyState === BODY_STATE.NONE_IMPORTED || article.bodyState === BODY_STATE.LINK_ONLY || article.bodyState === BODY_STATE.FAILED_IFRAME) {
       const fillBtn = document.createElement('button');
       fillBtn.type = 'button';
+      fillBtn.className = 'btn';
       fillBtn.textContent = t('fillBody');
       fillBtn.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -275,6 +315,7 @@ async function renderList() {
     if (highlightId && article.id === highlightId) {
       const refreshBtn = document.createElement('button');
       refreshBtn.type = 'button';
+      refreshBtn.className = 'btn';
       refreshBtn.textContent = article.bodyState === BODY_STATE.FULL ? t('refreshBody') : t('fillBodySave');
       refreshBtn.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -282,7 +323,7 @@ async function renderList() {
         if (!ok) return;
         const res = await send('confirmBodyRefresh', { id: article.id });
         if (res?.ok) await reload();
-        else if (res?.code === 'no_tab') alert(t('openOriginalFirst'));
+        else if (res?.code === 'no_tab') notify(t('openOriginalFirst'), true);
       });
       actions.appendChild(refreshBtn);
     }
@@ -290,6 +331,7 @@ async function renderList() {
     if (currentTab === 'trash') {
       const restoreBtn = document.createElement('button');
       restoreBtn.type = 'button';
+      restoreBtn.className = 'btn';
       restoreBtn.textContent = t('restore');
       restoreBtn.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -310,14 +352,11 @@ async function renderList() {
 
 function updateSelectionBar() {
   const bar = $('selection-bar');
-  const exportBtn = $('btn-export');
   if (!selectMode) {
     bar.classList.add('hidden');
-    exportBtn.classList.add('hidden');
     return;
   }
   bar.classList.remove('hidden');
-  exportBtn.classList.remove('hidden');
   $('selection-count').textContent = t('selectedCount', [String(selected.size)]);
   $('btn-sel-restore').classList.toggle('hidden', currentTab !== 'trash');
 }
@@ -325,6 +364,7 @@ function updateSelectionBar() {
 async function reload() {
   const res = await send('listArticles');
   allArticles = res?.articles || [];
+  articlesLoaded = true;
   const tagsRes = await send('getTags');
   const tagSelect = $('tag-filter');
   const cur = tagSelect.value;
@@ -475,15 +515,6 @@ async function handleImportFile(file) {
   return handleStandardImportFile(file);
 }
 
-function backupErrorLabel(lastError) {
-  const code = lastError?.code || 'unknown';
-  const key = `backupError_${code}`;
-  const localized = browserApi.i18n.getMessage(key);
-  if (localized) return localized;
-  if (lastError?.message) return lastError.message;
-  return t('backupStatusError');
-}
-
 function updateReplaceUndoButton(ptr) {
   const btn = $('btn-restore-undo');
   if (!btn) return;
@@ -496,37 +527,32 @@ function updateReplaceUndoButton(ptr) {
   btn.textContent = when ? t('restoreUndoReplaceAt', [when]) : t('restoreUndoReplace');
 }
 
-function renderBackupStatus(backup) {
-  backupState = backup;
-  const el = $('backup-status');
-  if (!backup) {
-    el.classList.add('hidden');
-    return;
-  }
-  el.classList.remove('hidden');
-  if (backup.deferred) {
-    el.textContent = t('backupDeferred');
-    return;
-  }
-  if (backup.lastError) {
-    el.textContent = backupErrorLabel(backup.lastError);
-    return;
-  }
-  if (backup.dirty || backup.inflight) {
-    el.textContent = t('backupStatusPending');
-    return;
-  }
-  if (backup.lastFileOkAt) {
-    el.textContent = t('backupStatusOk', [new Date(backup.lastFileOkAt).toLocaleString()]);
-  } else {
-    el.textContent = t('backupStatusNever');
-  }
+function renderBackupHeader() {
+  const snapshotEl = $('backup-line-snapshot');
+  const fileEl = $('backup-line-file');
+  const locale = browserApi.i18n.getUILanguage?.();
+  snapshotEl.innerHTML = statusLineHtml(
+    'vaultSnapshotLabel',
+    snapshotStatusParts(latestSnapshotAt, t, locale),
+    t
+  );
+  fileEl.innerHTML = statusLineHtml(
+    null,
+    fileBackupStatusParts(backupStatusPayload, t),
+    t
+  );
+}
+
+async function refreshBackupStatus() {
+  const res = await send('getLibraryState');
+  if (res?.settings) settings = res.settings;
+  backupStatusPayload = normalizeBackupStatus(res?.backup, settings);
+  latestSnapshotAt = res?.latestSnapshotAt || null;
+  renderBackupHeader();
   renderReviewBanner();
 }
 
 function isReviewBannerBlocked() {
-  if (!firstRunDone) return true;
-  if (!$('onboarding').classList.contains('hidden')) return true;
   if ($('import-dialog').open) return true;
   return false;
 }
@@ -542,20 +568,11 @@ function renderReviewBanner() {
   const show =
     shouldShowReviewPrompt({
       settings,
-      backupState,
-      firstRunDone,
+      backupState: backupStatusPayload?.state
+        ? { lastFileOkAt: backupStatusPayload.state.lastFileOkAt }
+        : null,
     }) && !isReviewBannerBlocked();
   banner.classList.toggle('hidden', !show);
-}
-
-async function maybeShowBackupNotice(backup) {
-  const notice = $('backup-notice');
-  if (!backup?.firstBackupDone || backup.firstBackupNoticeShown) {
-    notice.classList.add('hidden');
-    return;
-  }
-  notice.classList.remove('hidden');
-  $('backup-notice-text').textContent = t('backupLocationNotice', [backup.subfolder || 'PageBunker']);
 }
 
 async function applyImport() {
@@ -606,22 +623,8 @@ async function checkImportResume() {
   }
 }
 
-// 첫 실행 안내에 실제 배정된 단축키를 보여준다. 다른 확장과 겹쳐 배정되지 않았으면 설정 방법을 안내한다
-async function showShortcutHint() {
-  const el = $('onboarding-shortcut');
-  if (!el || !browserApi.commands?.getAll) return;
-  try {
-    const cmds = await browserApi.commands.getAll();
-    const cmd = cmds.find((c) => c.name === 'save-article');
-    const isFirefox = !!browserApi.runtime.getManifest().browser_specific_settings?.gecko;
-    el.textContent = cmd?.shortcut
-      ? t('onboardingShortcut', [cmd.shortcut])
-      : isFirefox
-        ? t('onboardingShortcutUnsetFirefox')
-        : t('onboardingShortcutUnset', [navigator.userAgent.includes('Edg/') ? 'edge://extensions/shortcuts' : 'chrome://extensions/shortcuts']);
-  } catch {
-    el.textContent = '';
-  }
+function openFilePicker() {
+  $('file-input').click();
 }
 
 async function init() {
@@ -634,22 +637,41 @@ async function init() {
 
   const params = new URLSearchParams(location.search);
   highlightId = params.get('highlight');
+  const openImport = params.get('import') === '1';
+  const openRestore = params.get('restore') === '1';
 
   const stateRes = await send('getLibraryState');
-  firstRunDone = !!stateRes?.firstRunDone;
   settings = stateRes?.settings || {};
-  if (!firstRunDone) {
-    $('onboarding').classList.remove('hidden');
-    showShortcutHint();
-  }
-  renderBackupStatus(stateRes?.backup);
-  maybeShowBackupNotice(stateRes?.backup);
+  backupStatusPayload = normalizeBackupStatus(stateRes?.backup, settings);
+  latestSnapshotAt = stateRes?.latestSnapshotAt || null;
   replaceUndoPtr = stateRes?.replaceUndo || null;
   updateReplaceUndoButton(replaceUndoPtr);
+  renderBackupHeader();
+
+  $('link-review-report')?.setAttribute('href', ISSUES_URL);
+  if (!getStoreReviewUrl()) $('btn-review-write')?.classList.add('hidden');
 
   await reload();
   await checkImportResume();
   renderReviewBanner();
+
+  // 브라우저는 사용자 클릭 없이 파일 창을 열지 못하게 막으므로, 설정에서 넘어오면 버튼 한 번을 받는다
+  $('btn-file-pick').addEventListener('click', () => {
+    $('file-pick-dialog').close();
+    openFilePicker();
+  });
+  $('btn-file-pick-cancel').addEventListener('click', () => $('file-pick-dialog').close());
+  if (openImport || openRestore) {
+    if (openRestore) {
+      $('backup-restore-hint').textContent = t('backupRestoreHint');
+      $('backup-restore-hint').classList.remove('hidden');
+    }
+    $('file-pick-title').textContent = t(openRestore ? 'filePickRestoreTitle' : 'filePickImportTitle');
+    $('file-pick-body').textContent = t(openRestore ? 'filePickRestoreBody' : 'filePickImportBody');
+    $('file-pick-dialog').showModal();
+    $('btn-file-pick').focus();
+    history.replaceState(null, '', location.pathname);
+  }
 
   $('search').addEventListener('input', (e) => runSearch(e.target.value));
 
@@ -732,23 +754,32 @@ async function init() {
     await reload();
   });
 
-  $('btn-sel-export').addEventListener('click', () => {
-    if (!selected.size) return;
+  // 내보낼 글: 선택한 글이 있으면 그 글, 없으면 지금 보고 있는 목록(탭·검색·태그 반영) 전체
+  function openExportDialog(ids, titleKey) {
+    if (!ids.length) {
+      notify(t('exportNothing'));
+      return;
+    }
+    exportIds = ids;
+    $('export-title').textContent = t(titleKey, [String(ids.length)]);
     $('export-dialog').showModal();
+  }
+
+  $('btn-sel-export').addEventListener('click', () => {
+    openExportDialog([...selected], 'exportTitleSelected');
   });
 
   $('btn-export').addEventListener('click', () => {
-    if (!selected.size) {
-      selectMode = true;
-      renderList();
+    if (selectMode && selected.size) {
+      openExportDialog([...selected], 'exportTitleSelected');
       return;
     }
-    $('export-dialog').showModal();
+    openExportDialog(getVisibleArticles().map((a) => a.id), 'exportTitleList');
   });
 
   $('btn-export-apply').addEventListener('click', async () => {
     const format = document.querySelector('input[name="export-format"]:checked')?.value || 'html';
-    const res = await send('exportArticles', { ids: [...selected], format });
+    const res = await send('exportArticles', { ids: exportIds, format });
     if (!res?.ok || !res.items) return;
     if (format === 'html') {
       const html = exportArticlesHtml(res.items);
@@ -775,20 +806,37 @@ async function init() {
 
   $('btn-import').addEventListener('click', () => {
     pendingImportJobId = null;
-    $('import-dialog').showModal();
-    renderReviewBanner();
+    openFilePicker();
   });
 
-  $('btn-onboarding-import').addEventListener('click', () => {
-    $('import-dialog').showModal();
-    renderReviewBanner();
+  $('btn-import-empty').addEventListener('click', () => {
+    pendingImportJobId = null;
+    openFilePicker();
   });
 
-  $('btn-onboarding-dismiss').addEventListener('click', async () => {
-    await send('dismissFirstRun');
-    firstRunDone = true;
-    $('onboarding').classList.add('hidden');
+  $('btn-settings').addEventListener('click', () => {
+    browserApi.runtime.openOptionsPage();
+  });
+
+  $('btn-backup-now').addEventListener('click', async () => {
+    await send('backupNow');
+    await refreshBackupStatus();
+  });
+
+  $('btn-backup-restore').addEventListener('click', () => {
+    $('backup-restore-hint').textContent = t('backupRestoreHint');
+    $('backup-restore-hint').classList.remove('hidden');
+    openFilePicker();
+  });
+
+  $('file-input').addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    pendingImportJobId = null;
+    $('import-dialog').showModal();
     renderReviewBanner();
+    handleImportFile(file);
   });
 
   $('btn-review-write')?.addEventListener('click', async () => {
@@ -804,11 +852,6 @@ async function init() {
     const res = await send('updateSettings', { patch: { reviewPrompt: 'dismissed' } });
     if (res?.ok) settings = res.settings || { ...settings, reviewPrompt: 'dismissed' };
     renderReviewBanner();
-  });
-
-  $('import-file').addEventListener('change', (e) => {
-    const file = e.target.files?.[0];
-    if (file) handleImportFile(file);
   });
 
   $('btn-import-apply').addEventListener('click', applyImport);
@@ -862,13 +905,8 @@ async function init() {
       await send('notifyDataChanged');
       await reload();
     } else {
-      alert(t('restoreFailed', [res?.code || '']));
+      notify(t('restoreFailed', [res?.code || '']), true);
     }
-  });
-
-  $('btn-backup-notice-dismiss')?.addEventListener('click', async () => {
-    await send('dismissBackupNotice');
-    $('backup-notice').classList.add('hidden');
   });
 
   $('btn-import-undo').addEventListener('click', async () => {

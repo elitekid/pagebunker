@@ -10,18 +10,25 @@ import {
   scripting,
   storage,
   tabs,
+  windows,
 } from './shared/browser.js';
+import { canSaveTabUrl, isRestrictedUrl } from './shared/restricted-url.js';
 import {
   ALARM_BACKUP,
   ALARM_WATCHDOG,
+  DEFAULT_BACKUP_STATE,
+  REPLACE_UNDO_KEY,
   requestBackupDownloadBlob,
   getBackupStatus,
   handleDownloadChanged,
+  loadBackupState,
   markDataDirty,
   markFirstBackupNoticeShown,
   getReplaceUndoPointer,
+  clearReplaceUndoPointer,
   reconcileBackupStartup,
   runBackup,
+  saveBackupState,
   setBackupDeferred as setBackupEngineDeferred,
 } from './shared/backup.js';
 import {
@@ -49,9 +56,14 @@ import {
   savePosition,
   saveUndoRecord,
   updateArticle,
+  wipeAllData,
+  clearRestoreTemp,
+  listIdbSnapshots,
 } from './shared/db.js';
 import {
   BODY_STATE,
+  DEFAULT_SETTINGS,
+  LOCATION,
   createArticle,
   generateId,
   loadSettings,
@@ -90,15 +102,228 @@ function urlOf(tab) {
   return tab?.url || tab?.pendingUrl || '';
 }
 
-function isRestrictedUrl(url) {
-  if (!url) return true;
-  if (url.startsWith('chrome://') || url.startsWith('edge://') || url.startsWith('about:')) return true;
-  if (url.startsWith('chrome-extension://') || url.startsWith('moz-extension://')) return true;
-  if (url.startsWith('file:')) return true;
-  // 확장 스토어는 브라우저가 스크립트 주입을 막는다
-  if (/^https:\/\/(chrome\.google\.com\/webstore|chromewebstore\.google\.com|microsoftedge\.microsoft\.com\/addons|addons\.mozilla\.org)(\/|$)/.test(url)) return true;
-  if (url.endsWith('.pdf') || url.includes('.pdf?')) return true;
-  return false;
+function hostFromUrl(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
+
+function summarizeArticle(article) {
+  return {
+    id: article.id,
+    title: article.title,
+    siteName: article.siteName,
+    savedAt: article.savedAt,
+    readState: article.readState,
+    location: article.location,
+    bodyState: article.bodyState,
+    readingMinutes: article.readingMinutes,
+    url: article.url,
+  };
+}
+
+function formatSaveResult(result) {
+  if (!result?.ok) {
+    return { ok: false, code: result?.code || 'failed' };
+  }
+  if (result.duplicate) {
+    return { ok: true, result: 'duplicate', article: summarizeArticle(result.article) };
+  }
+  if (result.keptBody) {
+    return { ok: true, result: 'kept_body', article: summarizeArticle(result.article) };
+  }
+  if (result.linkOnly) {
+    return { ok: true, result: 'link_only', article: summarizeArticle(result.article), undoable: true };
+  }
+  if (result.updated) {
+    return { ok: true, result: 'updated', article: summarizeArticle(result.article) };
+  }
+  return {
+    ok: true,
+    result: 'saved',
+    article: summarizeArticle(result.article),
+    undoable: true,
+  };
+}
+
+/** 페이지 우측 상단 알림(단축키·우클릭 저장) */
+function injectPageToast(payload) {
+  const HOST_ID = '__pagebunker_toast_host__';
+  let host = document.getElementById(HOST_ID);
+  if (!host) {
+    host = document.createElement('div');
+    host.id = HOST_ID;
+    host.style.cssText = 'position:fixed;top:16px;right:16px;z-index:2147483647';
+    document.documentElement.appendChild(host);
+  }
+
+  const shadow = host.shadowRoot || host.attachShadow({ mode: 'open' });
+  shadow.innerHTML = '';
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .wrap {
+      font: 600 13px system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: #047857;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      max-width: min(440px, calc(100vw - 32px));
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      white-space: nowrap;
+    }
+    .wrap.warn { color: #92400e; background: #fffbeb; border-color: rgba(180,83,9,.35); }
+    .msg { flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
+    .wrap button { flex: none; }
+    button {
+      border: none;
+      background: none;
+      color: #2457D6;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0;
+    }
+    button:hover { text-decoration: underline; }
+  `;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'wrap' + (payload.warn ? ' warn' : '');
+  const msg = document.createElement('span');
+  msg.className = 'msg';
+  msg.textContent = payload.text;
+  wrap.appendChild(msg);
+
+  let timer = null;
+  let hover = false;
+  const removeToast = () => {
+    if (timer) clearTimeout(timer);
+    host?.remove();
+  };
+
+  for (const btn of payload.buttons || []) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = btn.label;
+    b.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      chrome.runtime.sendMessage({ type: btn.action, ...btn.payload });
+      removeToast();
+    });
+    wrap.appendChild(b);
+  }
+
+  const schedule = () => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (!hover) removeToast();
+    }, 4000);
+  };
+  wrap.addEventListener('mouseenter', () => { hover = true; });
+  wrap.addEventListener('mouseleave', () => { hover = false; schedule(); });
+
+  shadow.append(style, wrap);
+  schedule();
+}
+
+function buildPageToastPayload(kind, articleId) {
+  const buttons = [];
+  if (kind === 'saved') {
+    buttons.push(
+      { label: i18n('ptoastReadNow'), action: 'openReader', payload: { id: articleId } },
+      { label: i18n('ptoastUndo'), action: 'undoArticleSave', payload: { id: articleId } },
+    );
+    return { text: i18n('ptoastSaved'), warn: false, buttons };
+  }
+  if (kind === 'link') {
+    buttons.push({ label: i18n('ptoastUndo'), action: 'undoArticleSave', payload: { id: articleId } });
+    return { text: i18n('ptoastLinkOnly'), warn: true, buttons };
+  }
+  if (kind === 'duplicate') {
+    buttons.push({ label: i18n('ptoastReadNow'), action: 'openReader', payload: { id: articleId } });
+    return { text: i18n('ptoastDuplicate'), warn: false, buttons };
+  }
+  return { text: i18n('ptoastCannotSave'), warn: true, buttons: [] };
+}
+
+async function showPageToast(tabId, kind, articleId = null) {
+  if (!scripting?.executeScript || !tabId) return false;
+  const payload = buildPageToastPayload(kind, articleId);
+  try {
+    await scripting.executeScript({
+      target: { tabId, frameIds: [0] },
+      func: injectPageToast,
+      args: [payload],
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function feedbackSaveResult(tab, result, feedback) {
+  if (feedback === 'none') return;
+  if (!result?.ok) {
+    if (feedback === 'toast') {
+      const shown = await showPageToast(tab.id, 'fail');
+      if (!shown) await showBadgeFail();
+    } else {
+      await showBadgeFail();
+    }
+    return;
+  }
+  if (result.duplicate) {
+    if (feedback === 'toast') {
+      const shown = await showPageToast(tab.id, 'duplicate', result.article?.id);
+      if (!shown) {
+        await showBadge(i18n('badgeExists'));
+        await setActionTooltip(i18n('badgeExistsTip', [result.article?.title || '']));
+      }
+    } else if (feedback === 'badge') {
+      await showBadge(i18n('badgeExists'));
+      await setActionTooltip(i18n('badgeExistsTip', [result.article?.title || '']));
+    }
+    return;
+  }
+  if (result.linkOnly) {
+    if (feedback === 'toast') {
+      const shown = await showPageToast(tab.id, 'link', result.article?.id);
+      if (!shown) {
+        await showBadge('+');
+        await setActionTooltip(i18n('badgeSavedLinkOnly'));
+      }
+    } else if (feedback === 'badge') {
+      await showBadge('+');
+      await setActionTooltip(i18n('badgeSavedLinkOnly'));
+    }
+    return;
+  }
+  if (result.keptBody) {
+    if (feedback === 'badge') {
+      await showBadge(i18n('badgeExists'));
+      await setActionTooltip(i18n('badgeBodyKept'));
+    }
+    return;
+  }
+  const label = result.updated ? i18n('badgeUpdated') : '+';
+  const tip = result.updated ? i18n('badgeUpdated') : i18n('badgeSaved');
+  if (feedback === 'toast') {
+    const shown = await showPageToast(tab.id, 'saved', result.article?.id);
+    if (!shown) {
+      await showBadge(label);
+      await setActionTooltip(tip);
+    }
+  } else if (feedback === 'badge') {
+    await showBadge(label);
+    await setActionTooltip(tip);
+  }
 }
 
 async function showBadge(text, color = BADGE_COLOR) {
@@ -136,6 +361,11 @@ async function registerContextMenus() {
       id: 'rl-save-page',
       contexts: ['page'],
       title: i18n('ctxSavePage'),
+    });
+    await contextMenus.create({
+      id: 'rl-open-library-page',
+      contexts: ['page'],
+      title: i18n('ctxOpenLibraryPage'),
     });
     await contextMenus.create({
       id: 'rl-open-library',
@@ -200,9 +430,129 @@ function buildArticleFromTab(tab, extract, bodyState) {
   });
 }
 
+async function doDeleteAllData() {
+  let state = await loadBackupState();
+  if (state.inflight) {
+    const ignored = [...(state.ignoredDownloadIds || []), state.inflight.downloadId].filter(Boolean);
+    state = { ...state, inflight: null, ignoredDownloadIds: ignored };
+  }
+  await wipeAllData();
+  await clearRestoreTemp();
+  await storage.local.remove([
+    IMPORT_JOB_KEY,
+    FILL_PENDING_KEY,
+    BACKUP_DEFER_KEY,
+    FIRST_RUN_KEY,
+    REPLACE_UNDO_KEY,
+  ]);
+  await saveSettings(storage.local, DEFAULT_SETTINGS);
+  await clearReplaceUndoPointer();
+  state = {
+    ...DEFAULT_BACKUP_STATE,
+    ignoredDownloadIds: state.ignoredDownloadIds || [],
+  };
+  await saveBackupState(state);
+  await alarms.clear(ALARM_BACKUP);
+  await alarms.clear(ALARM_WATCHDOG);
+  return { ok: true };
+}
+
+// 탭 주소 읽기 권한(tabs) 없이도 확장 자기 화면은 찾을 수 있다: 크롬·엣지는 runtime.getContexts, 그 밖에는 tabs.query 결과의 url
+async function findLibraryTab(base) {
+  const getContexts = browserApi.runtime?.getContexts;
+  if (typeof getContexts === 'function') {
+    try {
+      const contexts = await getContexts.call(browserApi.runtime, { contextTypes: ['TAB'] });
+      const hit = contexts.find((c) => c.tabId >= 0 && (c.documentUrl || '').startsWith(base));
+      if (hit) return { id: hit.tabId, windowId: hit.windowId, url: hit.documentUrl };
+    } catch {
+      /* 지원하지 않으면 아래로 */
+    }
+  }
+  const allTabs = await tabs.query({});
+  return allTabs.find((tab) => tab.url && tab.url.startsWith(base)) || null;
+}
+
 async function openLibrary(query = '') {
-  const url = browserApi.runtime.getURL(`library/library.html${query}`);
-  await tabs.create({ url, active: true });
+  const base = browserApi.runtime.getURL('library/library.html');
+  const suffix = query.startsWith('?') ? query : query ? `?${query}` : '';
+  const targetUrl = `${base}${suffix}`;
+  const existing = await findLibraryTab(base);
+  if (existing?.id) {
+    // 복구·가져오기처럼 화면을 지정해 열 때는 이미 열린 보관함도 그 주소로 다시 연다
+    const props = suffix && existing.url !== targetUrl ? { active: true, url: targetUrl } : { active: true };
+    await tabs.update(existing.id, props);
+    if (existing.windowId && windows?.update) {
+      await windows.update(existing.windowId, { focused: true });
+    }
+    return { ok: true, focused: true };
+  }
+  await tabs.create({ url: targetUrl, active: true });
+  return { ok: true, focused: false };
+}
+
+function openReaderTab(articleId) {
+  const url = browserApi.runtime.getURL(`reader/reader.html?id=${encodeURIComponent(articleId)}`);
+  return tabs.create({ url, active: true });
+}
+
+async function getTabSaveState(tabId, url, title) {
+  const extensionBase = browserApi.runtime.getURL('');
+  const saveCheck = canSaveTabUrl(url, extensionBase);
+  const host = hostFromUrl(url);
+  if (!saveCheck.canSave) {
+    return {
+      ok: true,
+      canSave: false,
+      reasonCode: saveCheck.code,
+      title: title || '',
+      host,
+    };
+  }
+  const key = matchKey(url);
+  const existing = key ? await findByMatchKey(key) : null;
+  if (existing && existing.location !== LOCATION.TRASH) {
+    return {
+      ok: true,
+      canSave: true,
+      saved: true,
+      title: existing.title || title || '',
+      host: host || existing.siteName || '',
+      article: summarizeArticle(existing),
+    };
+  }
+  return {
+    ok: true,
+    canSave: true,
+    saved: false,
+    title: title || '',
+    host,
+  };
+}
+
+async function listRecentArticles(limit = 5) {
+  const articles = await listArticles();
+  const recent = articles
+    .filter((a) => a.location !== LOCATION.TRASH)
+    .sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0))
+    .slice(0, limit)
+    .map(summarizeArticle);
+  return { ok: true, articles: recent, total: articles.filter((a) => a.location !== LOCATION.TRASH).length };
+}
+
+async function undoArticleSave(articleId) {
+  if (!articleId) return { ok: false, code: 'none' };
+  if (!lastSave || lastSave.id !== articleId) {
+    return { ok: false, code: 'none' };
+  }
+  const age = Date.now() - lastSave.at;
+  if (age > UNDO_WINDOW_MS) {
+    return { ok: false, code: 'expired' };
+  }
+  await deleteArticle(articleId);
+  lastSave = null;
+  await afterDataMutation();
+  return { ok: true, id: articleId };
 }
 
 /**
@@ -264,15 +614,15 @@ async function runTrashCleanup() {
 }
 
 async function saveFromTab(tab, opts = {}) {
-  const { forceUpdate = false } = opts;
+  const { forceUpdate = false, feedback = 'badge' } = opts;
   let fillArticleId = opts.fillArticleId ?? null;
   const tabUrl = urlOf(tab);
   const tabId = tab.id;
 
   // 주소를 받을 수 없거나 웹·파일 주소가 아닌 페이지(브라우저 내부 페이지 등)는 빈 글을 만들지 않는다
   if (!tabId || !/^(https?|file):/i.test(tabUrl)) {
-    await showBadgeFail();
-    await setActionTooltip(i18n('badgeCannotSave'));
+    await feedbackSaveResult(tab, { ok: false, code: 'cannot_save' }, feedback);
+    if (feedback === 'badge') await setActionTooltip(i18n('badgeCannotSave'));
     return { ok: false, code: 'cannot_save' };
   }
 
@@ -290,10 +640,10 @@ async function saveFromTab(tab, opts = {}) {
       isUpdate: false,
     });
     lastSave = { id: saved.article.id, at: Date.now() };
-    await showBadge('+');
-    await setActionTooltip(i18n('badgeSavedLinkOnly'));
     await afterDataMutation();
-    return { ok: true, article: saved.article, linkOnly: true };
+    const linkResult = { ok: true, article: saved.article, linkOnly: true };
+    await feedbackSaveResult(tab, linkResult, feedback);
+    return linkResult;
   }
 
   let extract;
@@ -301,15 +651,19 @@ async function saveFromTab(tab, opts = {}) {
     extract = await runExtract(tabId);
   } catch (err) {
     console.error('extract failed:', err);
-    await showBadgeFail();
-    await setActionTooltip(i18n('badgeFailed'));
+    await feedbackSaveResult(tab, { ok: false, code: 'extract_failed' }, feedback);
+    if (feedback === 'badge') await setActionTooltip(i18n('badgeFailed'));
     return { ok: false, code: 'extract_failed' };
   }
 
   const finalUrl = extract.finalUrl || tabUrl;
   if (!sameDocumentUrl(finalUrl, tabUrl)) {
-    await showBadge('~', BADGE_FAIL_COLOR);
-    await setActionTooltip(i18n('badgePageChanged'));
+    if (feedback === 'badge') {
+      await showBadge('~', BADGE_FAIL_COLOR);
+      await setActionTooltip(i18n('badgePageChanged'));
+    } else {
+      await feedbackSaveResult(tab, { ok: false, code: 'page_changed' }, feedback);
+    }
     return { ok: false, code: 'page_changed' };
   }
 
@@ -346,10 +700,9 @@ async function saveFromTab(tab, opts = {}) {
   if (!existing) existing = await findByMatchKey(key);
 
   if (existing && !refreshMode && !fillArticleId) {
-    await showBadge(i18n('badgeExists'));
-    await setActionTooltip(i18n('badgeExistsTip', [existing.title]));
-    await openLibrary(`?highlight=${encodeURIComponent(existing.id)}`);
-    return { ok: true, duplicate: true, article: existing };
+    const dupResult = { ok: true, duplicate: true, article: existing };
+    await feedbackSaveResult(tab, dupResult, feedback);
+    return dupResult;
   }
 
   const articleData = buildArticleFromTab(tab, extract, bodyState);
@@ -370,9 +723,9 @@ async function saveFromTab(tab, opts = {}) {
       ...articleData,
       bodyState: existing.bodyState,
     }, { keepBody: true });
-    await showBadge(i18n('badgeExists'));
-    await setActionTooltip(i18n('badgeBodyKept'));
-    return { ok: true, article: existing, keptBody: true };
+    const keptResult = { ok: true, article: existing, keptBody: true };
+    await feedbackSaveResult(tab, keptResult, feedback);
+    return keptResult;
   }
 
   let previousBody = null;
@@ -394,10 +747,6 @@ async function saveFromTab(tab, opts = {}) {
   }
 
   lastSave = { id: saved.article.id, at: Date.now() };
-  await showBadge(existing ? i18n('badgeUpdated') : '+');
-  await setActionTooltip(
-    newIsFull ? i18n('badgeSaved') : i18n('badgeSavedLinkOnly')
-  );
   if (newIsFull && !existing) {
     const settings = await loadSettings(storage.local);
     const saveCount = (settings.saveCount ?? 0) + 1;
@@ -405,7 +754,14 @@ async function saveFromTab(tab, opts = {}) {
   }
   await afterDataMutation();
 
-  return { ok: true, article: saved.article, updated: !!existing };
+  const saveResult = {
+    ok: true,
+    article: saved.article,
+    updated: !!existing,
+    linkOnly: !newIsFull,
+  };
+  await feedbackSaveResult(tab, saveResult, feedback);
+  return saveResult;
 }
 
 async function startFillBody(articleId) {
@@ -584,18 +940,13 @@ storage.local.get(BACKUP_DEFER_KEY).then((data) => {
   setBackupEngineDeferred(!!data[BACKUP_DEFER_KEY]);
 }).catch(() => {});
 
-action.onClicked.addListener((tab) => {
-  saveFromTab(tab).catch((err) => {
-    console.error('saveFromTab:', err);
-    showBadgeFail();
-  });
-});
-
 browserApi.commands.onCommand.addListener((command) => {
   if (command !== 'save-article') return;
   tabs.query({ active: true, currentWindow: true }).then((list) => {
     const tab = list[0];
-    if (tab) saveFromTab(tab).catch(() => showBadgeFail());
+    if (tab) {
+      saveFromTab(tab, { feedback: 'toast' }).catch(() => showBadgeFail());
+    }
   });
 });
 
@@ -603,10 +954,10 @@ if (contextMenus?.onClicked) {
   contextMenus.onClicked.addListener((info, tab) => {
     runMenuTask(async () => {
       if (info.menuItemId === 'rl-save-page' && tab) {
-        await saveFromTab(tab);
+        await saveFromTab(tab, { feedback: 'toast' });
         return;
       }
-      if (info.menuItemId === 'rl-open-library') {
+      if (info.menuItemId === 'rl-open-library-page' || info.menuItemId === 'rl-open-library') {
         await openLibrary();
         return;
       }
@@ -659,6 +1010,35 @@ browserApi.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
       case 'undoLastSave':
         return undoLastSave();
+
+      case 'getTabSaveState':
+        return getTabSaveState(msg.tabId, msg.url, msg.title);
+
+      case 'saveTabArticle': {
+        const tab = await tabs.get(msg.tabId);
+        const result = await saveFromTab(tab, { feedback: 'none' });
+        return formatSaveResult(result);
+      }
+
+      case 'refreshTabBody': {
+        const tab = await tabs.get(msg.tabId);
+        const result = await saveFromTab(tab, { forceUpdate: true, feedback: 'none' });
+        return formatSaveResult(result);
+      }
+
+      case 'undoArticleSave':
+        return undoArticleSave(msg.id);
+
+      case 'listRecentArticles':
+        return listRecentArticles(msg.limit || 5);
+
+      case 'focusLibrary':
+      case 'openLibrary':
+        return openLibrary(msg.query || '');
+
+      case 'openReader':
+        await openReaderTab(msg.id);
+        return { ok: true };
 
       case 'getSearchCorpus':
         return { ok: true, corpus: await getSearchCorpus() };
@@ -748,6 +1128,7 @@ browserApi.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         const backup = await getBackupStatus();
         const replaceUndo = await getReplaceUndoPointer();
         const settings = await loadSettings(storage.local);
+        const snapshots = await listIdbSnapshots();
         return {
           ok: true,
           firstRunDone: !!data[FIRST_RUN_KEY],
@@ -755,8 +1136,12 @@ browserApi.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
           backup,
           replaceUndo,
           settings,
+          latestSnapshotAt: snapshots[0]?.createdAt || null,
         };
       }
+
+      case 'deleteAllData':
+        return doDeleteAllData();
 
       case 'getBackupStatus':
         return { ok: true, status: await getBackupStatus() };

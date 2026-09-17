@@ -1,4 +1,7 @@
-// 스토어 리뷰 URL (등록 후 채움)
+// 스토어·이슈·소스 링크 (리뷰 URL 판별 포함)
+
+export const ISSUES_URL = 'https://github.com/elitekid/pagebunker/issues';
+export const SOURCE_URL = 'https://github.com/elitekid/pagebunker';
 
 export const STORE_REVIEW_URLS = {
   // 스토어 등록 후 채운다

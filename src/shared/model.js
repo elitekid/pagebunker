@@ -224,3 +224,18 @@ export async function saveSettings(storageApi, patch) {
   await storageApi.set({ [SETTINGS_KEY]: next });
   return next;
 }
+
+/** 파일 백업 상태 판정(TabBunker와 동일 순서) */
+export function deriveFileStatus(meta, state, settings) {
+  const revision = meta?.revision ?? 0;
+  const lastOk = state?.lastFileOkRevision ?? 0;
+  const dirty = revision > lastOk;
+
+  if (!settings?.autoFileBackup) return 'off';
+  if (state?.paused === 'canceled') return 'paused';
+  if (state?.inflight) return 'writing';
+  if (state?.lastError && dirty) return 'failed';
+  if (dirty) return 'pending';
+  if (state?.lastFileOkAt) return 'ok';
+  return 'never';
+}

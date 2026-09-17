@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <title>PageBunker</title>
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup" role="dialog" aria-label="PageBunker">
+    <header class="popup-hd">
+      <h1 class="popup-title" data-i18n="extName">PageBunker</h1>
+      <p id="backup-status" class="popup-status" aria-live="polite"></p>
+    </header>
+
+    <div id="backup-notice" class="backup-notice hidden" role="note">
+      <p class="backup-notice-text" data-i18n="popupBackupNotice"></p>
+      <p id="backup-notice-firefox" class="backup-notice-text hidden" data-i18n="popupBackupNoticeFirefox"></p>
+      <div class="backup-notice-actions">
+        <button id="btn-notice-ok" type="button" class="btn primary" data-i18n="getStarted">Got it</button>
+        <button id="btn-notice-settings" type="button" class="link-btn" data-i18n="popupBackupNoticeSettings">Turn off in Settings</button>
+      </div>
+    </div>
+
+    <div id="toast" class="popup-toast hidden" role="status" aria-live="polite">
+      <span id="toast-text" class="sp"></span>
+      <button id="btn-toast-undo" type="button" class="link-btn hidden" data-i18n="popupUndoSave">Undo save</button>
+    </div>
+
+    <section id="page-sec" class="save-sec" aria-labelledby="page-heading">
+      <p class="save-kicker" data-i18n="popupThisPage">This page</p>
+      <div id="page-content"></div>
+    </section>
+
+    <p id="saved-label" class="section-label" data-i18n="popupSavedSection">Saved articles</p>
+    <input type="search" id="search" class="popup-search hidden" data-i18n-placeholder="popupSearchPlaceholder" data-i18n-aria="popupSearchPlaceholder">
+
+    <div id="groups-empty" class="groups-empty hidden">
+      <p class="groups-empty-title" data-i18n="popupEmptyTitle">No saved articles yet</p>
+      <p class="groups-empty-body">
+        <span data-i18n="popupEmptyBody"></span>
+        <button type="button" id="btn-import" class="link-btn import-link" data-i18n="popupImportLink">Import from Pocket or Instapaper</button>
+      </p>
+    </div>
+    <p id="groups-nomatch" class="groups-nomatch hidden" data-i18n="popupNoMatch">No articles match your search</p>
+    <div id="article-list" class="group-list" role="list"></div>
+    <p id="more-note" class="more-note hidden"></p>
+
+    <footer class="popup-ft">
+      <button id="btn-open-library" type="button" class="link-btn" data-i18n="popupManageFull">Open full library</button>
+      <button id="btn-settings" type="button" class="link-btn" data-i18n="settings">Settings</button>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -9,41 +9,160 @@
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
-  <h1 data-i18n="settingsTitle">Settings</h1>
+  <header class="options-top">
+    <div class="options-top-in">
+      <h1 data-i18n="settingsTitle">PageBunker Settings</h1>
+      <span id="save-hint" class="save-hint" data-i18n="optionsAutoSaveHint">Changes save automatically</span>
+      <span class="options-spacer" aria-hidden="true"></span>
+      <button id="btn-open-library" type="button" class="btn" data-i18n="openLibrary">Open library</button>
+    </div>
+  </header>
 
-  <fieldset>
-    <legend data-i18n="readingOptions">Reading</legend>
-    <label>
-      <input type="checkbox" id="autoMarkRead" checked>
-      <span data-i18n="autoMarkRead">Mark as read when I reach the end</span>
-    </label>
-    <p class="hint" data-i18n="autoMarkReadHint">Requires scrolling and a few seconds on the page.</p>
-  </fieldset>
+  <div id="toast" class="app-toast hidden" role="status" aria-live="polite"></div>
 
-  <fieldset>
-    <legend data-i18n="imageOptions">Images</legend>
-    <label>
-      <input type="checkbox" id="showImagesDefault">
-      <span data-i18n="showImagesDefault">Show images by default</span>
-    </label>
-    <p class="hint" data-i18n="showImagesDefaultHint">When off, images load only when you tap Show images in a article.</p>
-  </fieldset>
+  <main class="options-main">
+    <h2 class="section-label" data-i18n="optionsSectionReading">Reading</h2>
+    <div class="options-card">
+      <div class="options-row">
+        <div class="options-row-text">
+          <div id="autoMarkRead-label" class="options-row-title" data-i18n="autoMarkRead">Mark as read when I reach the end</div>
+          <div class="options-row-desc" data-i18n="autoMarkReadHint">Requires scrolling and a few seconds on the page.</div>
+        </div>
+        <label class="switch-wrap">
+          <input type="checkbox" id="autoMarkRead" role="switch" checked aria-labelledby="autoMarkRead-label">
+          <span class="switch-ui" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div class="options-row">
+        <div class="options-row-text">
+          <div id="reader-theme-label" class="options-row-title" data-i18n="optionsReaderThemeTitle">Reader theme</div>
+          <div class="options-row-desc" data-i18n="optionsReaderThemeDesc">Applies to the reading view.</div>
+        </div>
+        <fieldset class="segment" role="radiogroup" aria-labelledby="reader-theme-label">
+          <label class="segment-opt">
+            <input type="radio" name="theme" id="theme-auto" value="auto" checked>
+            <span data-i18n="themeAuto">Auto</span>
+          </label>
+          <label class="segment-opt">
+            <input type="radio" name="theme" id="theme-light" value="light">
+            <span data-i18n="themeLight">Light</span>
+          </label>
+          <label class="segment-opt">
+            <input type="radio" name="theme" id="theme-dark" value="dark">
+            <span data-i18n="themeDark">Dark</span>
+          </label>
+        </fieldset>
+      </div>
+    </div>
 
-  <fieldset>
-    <legend data-i18n="backupOptions">Backup</legend>
-    <label>
-      <input type="checkbox" id="autoFileBackup">
-      <span data-i18n="autoFileBackup">Automatic file backup</span>
-    </label>
-    <p class="hint" data-i18n="autoFileBackupHint">Saves a backup file to your Downloads folder.</p>
-    <button type="button" id="btn-manual-backup" class="btn" data-i18n="manualBackup">Export full backup</button>
-    <p class="hint" data-i18n="manualBackupHint">Download all articles as a backup file.</p>
-  </fieldset>
+    <h2 class="section-label" data-i18n="optionsSectionImages">Images</h2>
+    <div class="options-card">
+      <div class="options-row">
+        <div class="options-row-text">
+          <div id="showImagesDefault-label" class="options-row-title" data-i18n="showImagesDefault">Show images by default</div>
+          <div class="options-row-desc" data-i18n="showImagesDefaultHint">When off, images load only when you tap Show images in an article.</div>
+        </div>
+        <label class="switch-wrap">
+          <input type="checkbox" id="showImagesDefault" role="switch" aria-labelledby="showImagesDefault-label">
+          <span class="switch-ui" aria-hidden="true"></span>
+        </label>
+      </div>
+    </div>
 
-  <p><a href="../library/library.html" data-i18n="openLibrary">Open library</a></p>
+    <h2 class="section-label" data-i18n="optionsSectionFileBackup">File backup</h2>
+    <div class="options-card">
+      <div class="options-row">
+        <div class="options-row-text">
+          <div id="autoFileBackup-label" class="options-row-title" data-i18n="optionsAutoFileBackupTitle">Save backup files to Downloads</div>
+          <div id="backup-status-desc" class="options-row-desc backup-status-desc"></div>
+        </div>
+        <label class="switch-wrap">
+          <input type="checkbox" id="autoFileBackup" role="switch" checked aria-labelledby="autoFileBackup-label">
+          <span class="switch-ui" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div class="options-row" data-backup-dependent>
+        <div class="options-row-text">
+          <div class="options-row-title" data-i18n="optionsBackupNowTitle">Save right now</div>
+        </div>
+        <button id="btn-backup-now" type="button" class="btn" data-i18n="backupNow">Back up now</button>
+      </div>
+      <div class="options-row">
+        <div class="options-row-text">
+          <div class="options-row-title" data-i18n="manualBackup">Export full backup</div>
+          <div class="options-row-desc" data-i18n="manualBackupHint">Download all articles as a backup file.</div>
+        </div>
+        <button id="btn-export-backup" type="button" class="btn" data-i18n="optionsExportBackupBtn">Export</button>
+      </div>
+      <div class="options-row">
+        <div class="options-row-text">
+          <div class="options-row-title" data-i18n="optionsRestoreBackupTitle">Restore from backup file</div>
+          <div class="options-row-desc" data-i18n="optionsRestoreBackupDesc">Open the library restore screen.</div>
+        </div>
+        <button id="btn-restore-backup" type="button" class="btn" data-i18n="backupRestoreFromFile">Restore from backup file</button>
+      </div>
+    </div>
 
-  <button id="btn-save" type="button" class="btn primary" data-i18n="save">Save</button>
-  <p id="status" role="status" aria-live="polite"></p>
+    <h2 class="section-label" data-i18n="optionsSectionImport">Import</h2>
+    <div class="options-card">
+      <div class="options-row">
+        <div class="options-row-text">
+          <div class="options-row-title" data-i18n="optionsImportTitle">Import from Pocket, Instapaper, or bookmarks</div>
+          <div class="options-row-desc" data-i18n="optionsImportDesc">Opens the library import screen.</div>
+        </div>
+        <button id="btn-open-import" type="button" class="btn" data-i18n="importBtn">Import</button>
+      </div>
+    </div>
+
+    <h2 class="section-label" data-i18n="optionsSectionShortcuts">Keyboard shortcuts</h2>
+    <div class="options-card">
+      <div class="options-row">
+        <div class="options-row-text">
+          <div class="options-row-title" data-i18n="optionsShortcutTitle">Save this article</div>
+          <div class="options-row-desc" data-i18n="optionsShortcutDesc">Saves the page you are reading.</div>
+        </div>
+        <div class="shortcut-actions">
+          <div id="shortcut-keys" class="shortcut-keys" aria-live="polite"></div>
+          <button id="btn-shortcut-change" type="button" class="btn" data-i18n="optionsShortcutChange">Change</button>
+          <p id="shortcut-firefox-hint" class="shortcut-hint hidden" data-i18n="optionsShortcutFirefoxHint">Change it in Add-ons Manager, gear menu, Manage Extension Shortcuts.</p>
+          <p id="shortcut-fallback-hint" class="shortcut-hint hidden" data-i18n="optionsShortcutFallbackHint">Open your browser's extension shortcut settings to change this shortcut.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-label" data-i18n="optionsSectionInfo">About</h2>
+    <div class="options-card">
+      <div class="options-row options-row-info">
+        <div class="options-links">
+          <a id="link-about-review" href="#" target="_blank" rel="noopener" data-i18n="reviewWrite">Write a review</a>
+          <a id="link-about-report" href="#" target="_blank" rel="noopener" data-i18n="reportProblem">Report a problem</a>
+          <a id="link-about-source" href="https://github.com/elitekid/pagebunker" target="_blank" rel="noopener" data-i18n="sourceCode">Source code</a>
+        </div>
+        <span id="version-label" class="version-label"></span>
+      </div>
+    </div>
+
+    <h2 class="section-label" data-i18n="optionsSectionDelete">Delete data</h2>
+    <div class="options-card options-card-danger">
+      <div class="options-row">
+        <div class="options-row-text">
+          <div class="options-row-title" data-i18n="optionsDeleteTitle">Delete saved articles and settings</div>
+          <div class="options-row-desc" data-i18n="optionsDeleteDesc">This cannot be undone. Backup files in Downloads are not deleted.</div>
+        </div>
+        <button id="btn-delete-all" type="button" class="btn danger" data-i18n="optionsDeleteBtn">Delete all</button>
+      </div>
+    </div>
+  </main>
+
+  <dialog id="confirm-dialog" class="confirm-dialog" aria-labelledby="confirm-delete-title">
+    <p id="confirm-delete-title" class="confirm-title"></p>
+    <p id="confirm-delete-backup" class="confirm-note"></p>
+    <button id="btn-confirm-backup-now" type="button" class="btn hidden" data-i18n="deleteAllBackupNow">Back up now</button>
+    <div class="dialog-actions">
+      <button id="btn-confirm-delete" type="button" class="btn danger" data-i18n="optionsDeleteBtn">Delete all</button>
+      <button id="btn-confirm-cancel" type="button" class="btn" data-i18n="cancel" autofocus>Cancel</button>
+    </div>
+  </dialog>
 
   <script type="module" src="options.js"></script>
 </body>
