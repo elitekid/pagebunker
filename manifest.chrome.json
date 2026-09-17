@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "description": "__MSG_extDescription__",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "homepage_url": "https://elitekid.github.io/pagebunker/",
   "minimum_chrome_version": "109",
   "default_locale": "en",
   "permissions": [
