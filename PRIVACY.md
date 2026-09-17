@@ -6,9 +6,9 @@ Last updated: 2026-09-17
 
 PageBunker does not collect, transmit, or sell any personal data. It has no sign-up, no account, and no server. It contains no analytics, advertising, or tracking code.
 
-## Data we collect
+## Data sent to the developer
 
-None. No data is sent to the developer.
+None. PageBunker does not send any data to the developer or to any third party. The article content and links you save stay on your device, as described below.
 
 ## Data stored on your device
 
@@ -67,9 +67,9 @@ https://github.com/elitekid/pagebunker/issues
 
 PageBunker는 개인정보를 수집하거나 전송하거나 판매하지 않습니다. 가입, 계정, 서버가 없습니다. 분석, 광고, 추적 코드도 없습니다.
 
-## 수집하는 데이터
+## 개발자에게 보내는 데이터
 
-없습니다. 개발자에게 보내는 데이터가 없습니다.
+없습니다. PageBunker는 개발자나 제3자에게 어떤 데이터도 보내지 않습니다. 저장한 글 내용과 링크는 아래처럼 기기에만 남습니다.
 
 ## 기기에 저장되는 데이터
 
