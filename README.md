@@ -2,9 +2,13 @@
 
 **Save articles. Read offline.**
 
+PageBunker is a Chrome, Edge, and Firefox extension that saves the article you are reading to your own device. No account, no server. Saved articles open offline and after the original page is gone, full-text search covers the body, and a backup file is kept in your Downloads folder. MIT licensed. No device sync, no mobile app.
+
 [Website](https://elitekid.github.io/pagebunker/) · [Privacy policy](PRIVACY.md) · [Report a problem](https://github.com/elitekid/pagebunker/issues)
 
-**Install:** [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/pagebunker/mmlfiljlnohhhjacaoniejfelagjcgna). Chrome and Firefox listings are in review.
+**Install:** [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/pagebunker/mmlfiljlnohhhjacaoniejfelagjcgna) · [Chrome Web Store](https://chromewebstore.google.com/detail/pagebunker/pbobkmgfnaffcckkggiajhjdbjplgpce)
+
+Store status as of September 18, 2026: Edge 1.1.0 is available. Chrome 1.0.0 is available, with 1.1.0 under review. The Firefox listing is not public yet. The toolbar steps below describe version 1.1.0; Chrome users should wait for that update before following them.
 
 ![PageBunker library](docs/assets/library-en.png)
 
@@ -21,10 +25,10 @@ The JSON files in your Downloads folder remain on disk and can be used to restor
 
 - **Save this article** — toolbar button (then "Save this article" in the panel), `Alt+Shift+L` (`Option+Shift+L` on Mac), or right-click menu. Title, author, publish date, and body are extracted; ads, menus, and comments are left out. If the body cannot be extracted, the link is saved instead.
 - **Library** — To read, Read, Archive, and Trash. Articles in Trash are deleted automatically after 30 days. Sort, add tags, and select multiple articles at once.
-- **Reader** — saved articles open without an internet connection, and still open after the original page is deleted. Adjust font size, line spacing, and width. Light and dark themes. Remembers where you stopped reading. Marks an article as read when you reach the end (can be turned off).
+- **Reader** — saved articles open without an internet connection, and still open after the original page is deleted. Adjust font size, line spacing, and width. Light and dark themes. Remembers where you stopped reading. Marks an article as read when you reach the end (can be turned off). Offline reading applies to saved text; images still come from the original website.
 - **Images off by default** — no request goes to the original site until you click "Show images" in an article or turn them on in settings.
-- **Search** — search titles, sites, tags, and full article text in English and Korean.
-- **Import** — Pocket CSV export (unzip the downloaded file and choose the CSV), Pocket legacy HTML export, Instapaper CSV, and browser bookmarks HTML. Preview before importing. Each import can be undone as a whole. Imported items arrive as links; open the original page and save it to fill in the article body.
+- **Search** — full-text search finds words in saved article bodies, titles, sites, and tags in English and Korean. You can find a phrase from the text even when you do not remember the title.
+- **Import** — Pocket CSV export (unzip the downloaded file and choose the CSV), Pocket legacy HTML export, Instapaper CSV, and browser bookmarks HTML. Preview before importing. Each import can be undone as a whole. Imported items arrive as links; open the original page and save it to fill in the article body. Importing links does not recover deleted source pages.
 - **Backup and restore** — automatic backup to Downloads. Restore after reinstall with merge or replace; a replace can be undone once.
 - **Export** — selected articles as a single HTML file or as one Markdown file per article.
 - **Browsers** — Chrome and Edge (same zip), Firefox (separate zip).
@@ -65,7 +69,7 @@ Because of the `downloads` permission, Chrome shows "Manage your downloads" at i
 - Instapaper CSV
 - Browser bookmarks HTML
 
-Preview before importing. Each import can be undone as a whole. Imported items arrive as links; open the original page and save it to fill in the article body.
+Preview before importing. Each import can be undone as a whole. Imported items arrive as links; open the original page and save it to fill in the article body. Importing links does not recover deleted source pages.
 
 **Export formats**
 

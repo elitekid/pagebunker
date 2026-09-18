@@ -84,13 +84,15 @@
   <div>
     <h1 data-lang="en">Save articles.<br>Read offline.</h1>
     <h1 data-lang="ko">글을 저장하고,<br>오프라인에서 읽습니다.</h1>
-    <p class="lead" data-lang="en">Save articles without ads or menus. Read them offline, search full text, and keep automatic backups in your Downloads folder. No account, no server.</p>
-    <p class="lead" data-lang="ko">광고와 메뉴를 뺀 글을 저장하고 인터넷 없이 읽습니다. 본문 전체 검색과 다운로드 폴더 자동 백업을 지원합니다. 가입·서버 없음.</p>
+    <p class="lead" data-lang="en">PageBunker is a Chrome, Edge, and Firefox extension that saves the article you are reading to your own device. No account, no server. Saved articles open offline and after the original page is gone, full-text search covers the body, and a backup file is kept in your Downloads folder. MIT licensed. No device sync, no mobile app.</p>
+    <p class="lead" data-lang="ko">PageBunker는 지금 보는 글의 본문을 내 기기에 저장하는 크롬·엣지·파이어폭스 확장이에요. 가입할 계정도, 글을 보관하는 서버도 없어요. 저장한 글은 인터넷이 없어도, 원문이 사라진 뒤에도 열리고, 본문 전체를 검색할 수 있으며, 다운로드 폴더에 백업 파일이 함께 남아요. MIT 오픈소스이고, 기기 간 동기화와 모바일 앱은 없어요.</p>
     <div class="cta">
       <a class="btn accent" href="https://microsoftedge.microsoft.com/addons/detail/pagebunker/mmlfiljlnohhhjacaoniejfelagjcgna" data-lang="en">Get it for Edge</a>
       <a class="btn accent" href="https://microsoftedge.microsoft.com/addons/detail/pagebunker/mmlfiljlnohhhjacaoniejfelagjcgna" data-lang="ko">엣지에 설치</a>
-      <span class="store-note" data-lang="en">Chrome and Firefox listings are in review.</span>
-      <span class="store-note" data-lang="ko">크롬·파이어폭스 스토어는 심사 중입니다.</span>
+      <a class="btn accent" href="https://chromewebstore.google.com/detail/pagebunker/pbobkmgfnaffcckkggiajhjdbjplgpce" data-lang="en">Get it for Chrome</a>
+      <span class="store-note" data-lang="en">Store status as of September 18, 2026: Edge 1.1.0 is available. Chrome 1.0.0 is available, with 1.1.0 under review. The Firefox listing is not public yet.</span>
+      <a class="btn accent" href="https://chromewebstore.google.com/detail/pagebunker/pbobkmgfnaffcckkggiajhjdbjplgpce" data-lang="ko">크롬에 설치</a>
+      <span class="store-note" data-lang="ko">2026년 9월 18일 스토어 상태: 엣지는 1.1.0이 공개됐습니다. 크롬은 1.0.0이 공개됐고 1.1.0은 심사 중입니다. 파이어폭스 등록 페이지는 아직 공개되지 않았습니다.</span>
       <a class="btn ghost" href="https://github.com/elitekid/pagebunker">GitHub</a>
     </div>
     <small data-lang="en">Free. Open source. English and Korean UI.</small>
@@ -115,8 +117,8 @@
 
 <section id="why"><div class="wrap">
   <h2 data-lang="en">Why a file on disk</h2><h2 data-lang="ko">왜 디스크에 파일로 남기나</h2>
-  <p data-lang="en">Most read-later tools keep your list only inside the browser's extension storage. That storage disappears when the extension is removed, the profile is reset, or browser data is cleared. PageBunker treats browser storage as working memory and the file in your Downloads folder as the copy you own. Reinstall, choose restore from backup, and your library is back.</p>
-  <p data-lang="ko">대부분의 나중에 읽기 도구는 목록을 브라우저 확장 저장소 안에만 둡니다. 확장을 지우거나 프로필을 초기화하거나 브라우저 데이터를 정리하면 사라집니다. PageBunker는 브라우저 저장소를 작업 공간으로 보고, 다운로드 폴더의 파일을 사용자가 소유한 사본으로 봅니다. 다시 설치하고 백업 파일로 복원하면 보관함이 돌아옵니다.</p>
+  <p data-lang="en">The browser library and the backup file in Downloads are separate copies. Browser storage disappears when the extension is removed, the profile is reset, or browser data is cleared. After uninstalling, you can restore from a backup file that remains on disk.</p>
+  <p data-lang="ko">브라우저 보관함과 다운로드 폴더의 백업 파일은 따로 보관됩니다. 브라우저 저장소는 확장을 지우거나 프로필을 초기화하거나 브라우저 데이터를 정리하면 사라집니다. 확장을 지운 뒤에는 남아 있는 백업 파일로 복원할 수 있습니다.</p>
   <div class="honest" data-lang="en"><b>What it does not do.</b> A failing disk or a deleted Downloads folder is not covered. PageBunker makes losing your library much less likely. It does not make it impossible. Copy backup files elsewhere if that matters to you.</div>
   <div class="honest" data-lang="ko"><b>못 하는 것도 있습니다.</b> 디스크 고장이나 다운로드 폴더 삭제는 막지 못합니다. PageBunker는 글을 잃을 가능성을 크게 줄여 주는 도구이지, 불가능하게 만드는 도구는 아닙니다. 필요하면 백업 파일을 다른 곳에 복사해 두세요.</div>
 </div></section>
@@ -129,7 +131,7 @@
     <div class="show-img"><img src="assets/library-en.png" width="1280" height="800" loading="lazy" alt="PageBunker library" data-lang="en"><img src="assets/library-ko.png" width="1280" height="800" loading="lazy" alt="PageBunker 보관함" data-lang="ko"></div>
   </div>
   <div class="show rev">
-    <div class="show-text"><h3 data-lang="en">Search the full text</h3><h3 data-lang="ko">본문 전체 검색</h3><p data-lang="en">Search titles, sites, tags, and full article text in English and Korean. Matching passages are highlighted in the results.</p><p data-lang="ko">제목, 사이트, 태그, 본문 전체를 한국어와 영어로 검색합니다. 결과에서 일치하는 구절이 강조됩니다.</p></div>
+    <div class="show-text"><h3 data-lang="en">Search the full text</h3><h3 data-lang="ko">본문 전체 검색</h3><p data-lang="en">Find an article by a phrase in its saved text, even if you forget the title. Search covers your library, not the unsaved body of a link-only item.</p><p data-lang="ko">제목을 잊었어도 저장한 본문의 구절로 찾을 수 있습니다. 검색 대상은 보관함의 글이며, 아직 본문을 저장하지 않은 링크의 원문까지 검색하지는 않습니다.</p></div>
     <div class="show-img"><img src="assets/search-en.png" width="1280" height="800" loading="lazy" alt="Full-text search in PageBunker" data-lang="en"><img src="assets/search-ko.png" width="1280" height="800" loading="lazy" alt="PageBunker 본문 검색" data-lang="ko"></div>
   </div>
   <div class="show">
