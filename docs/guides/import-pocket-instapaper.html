@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pocket·Instapaper 파일을 PageBunker로 가져오기</title>
+<meta name="description" content="보관 중인 Pocket CSV·HTML, Instapaper CSV를 PageBunker로 가져오는 절차. 백업, 미리보기, 본문 저장, 오프라인 확인과 복구의 한계를 안내합니다.">
+<link rel="icon" href="../assets/icon128.png">
+<style>
+  :root { --ink:#1b1f24; --muted:#5b6470; --line:#e3e6ea; --bg:#fafbfc; --card:#fff; --link:#1f5fbf; --navy:#16213a; --navy2:#2b3a55; --accent:#3fc8a8; --warn:#b3540b; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:-apple-system,"Segoe UI",Inter,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; color:var(--ink); background:var(--bg); line-height:1.75; overflow-wrap:anywhere; }
+  .wrap { max-width:960px; margin:0 auto; padding:0 20px; }
+  nav { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+  nav .brand { display:flex; align-items:center; gap:10px; font-weight:700; text-decoration:none; color:var(--ink); }
+  nav .brand img { width:28px; height:28px; border-radius:7px; }
+  nav .links a { margin-left:16px; color:var(--muted); font-size:14px; }
+  a { color:var(--link); text-underline-offset:3px; }
+  a:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  header.hero { background:radial-gradient(circle at 15% 15%, var(--navy2) 0, var(--navy) 60%); color:#fff; padding:48px 0; }
+  .hero h1 { font-size:38px; line-height:1.3; margin:0 0 18px; letter-spacing:-1px; }
+  .hero .lead { color:#dbe3f0; font-size:18px; }
+  .hero .meta { color:#dbe3f0; font-size:14px; }
+  .hero .summary { border-left:3px solid var(--accent); padding-left:16px; color:#dbe3f0; font-size:15px; }
+  .toc { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin:32px 0; }
+  .toc ol { margin-bottom:0; }
+  section { padding:32px 0; }
+  section + section { border-top:1px solid var(--line); }
+  h2 { font-size:26px; line-height:1.4; margin:0 0 14px; letter-spacing:-.5px; }
+  p { margin:12px 0; }
+  li + li { margin-top:8px; }
+  .honest { border-left:4px solid var(--warn); background:#fff6ee; padding:12px 16px; border-radius:6px; margin-top:18px; font-size:15px; }
+  .source { color:var(--muted); font-size:14px; }
+  code { background:#f1f3f6; padding:1px 6px; border-radius:4px; font-size:13px; }
+  footer { color:var(--muted); font-size:13px; padding:34px 0 54px; border-top:1px solid var(--line); }
+  @media (max-width:760px) { .hero h1 { font-size:30px; } h2 { font-size:23px; } .toc { padding:16px; } nav .links a { margin-left:0; margin-right:12px; } }
+  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+<nav aria-label="사이트 탐색">
+  <a class="brand" href="../index.html"><img src="../assets/icon128.png" alt="">PageBunker</a>
+  <div class="links"><a href="../index.html">홈</a><a href="read-later-without-account.html">도구 비교</a></div>
+</nav>
+<main>
+<article>
+  <header class="hero"><div class="wrap">
+    <h1>보관 중인 Pocket·Instapaper 파일을 PageBunker로 가져오기</h1>
+    <p class="lead">내보내기 파일의 링크를 옮기고, 읽을 글의 본문을 따로 저장하는 순서입니다.</p>
+    <p>이 문서는 PageBunker 제작자가 작성했습니다. 제품 설명 확인일과 실제 시험일을 구분해 기록합니다. 경쟁 도구는 같은 조건을 충족하는 경우에만 비교합니다.</p>
+    <p class="meta">자료 조사·제품 설명 확인일: <time datetime="2026-09-18">2026-09-18</time> · 실제 시험일: 이번 문서 작성에서는 실사용 시험을 수행하지 않았습니다.</p>
+    <p class="summary" lang="en">Import an existing Pocket CSV or legacy HTML export, Instapaper CSV, or browser bookmarks HTML into PageBunker. Imports add links, not article bodies; save each accessible original page to read its text offline. Images are not archived offline. Pocket exports ended on November 12, 2025. This maker-written guide is based on documentation reviewed on September 18, 2026, not a hands-on test.</p>
+  </div></header>
+  <div class="wrap">
+    <aside class="toc" aria-labelledby="contents">
+      <h2 id="contents">목차</h2>
+      <ol>
+        <li><a href="#available">지금 가능한 이동과 불가능한 복구</a></li>
+        <li><a href="#files">파일 고르기</a></li>
+        <li><a href="#backup">가져오기 전 보관함 보호</a></li>
+        <li><a href="#preview">미리보기와 확정</a></li>
+        <li><a href="#body">링크에 본문 채우기</a></li>
+        <li><a href="#offline">오프라인 읽기와 검색 확인</a></li>
+        <li><a href="#undo">잘못 가져왔을 때</a></li>
+        <li><a href="#limits">해결하지 못하는 경우</a></li>
+      </ol>
+    </aside>
+    <section id="available">
+      <h2>1. 지금 가능한 이동과 불가능한 복구</h2>
+      <p>이 가이드는 이미 가지고 있는 내보내기 파일을 옮기는 절차입니다. Pocket 내보내기는 2025년 11월 12일 종료됐으므로 지금 Pocket에 접속해 새 파일을 받는 방법은 제공하지 않습니다. 종료 일정의 근거는 <a href="https://support.mozilla.org/en-US/kb/future-of-pocket">Mozilla의 Pocket 종료 안내</a>입니다.</p>
+      <p>파일에 남은 링크를 PageBunker로 가져오는 것과 그 링크의 본문을 확보하는 것은 다른 작업입니다. 링크를 옮겨도 이미 사라진 원문이 복구되지는 않습니다.</p>
+    </section>
+    <section id="files">
+      <h2>2. 파일 고르기</h2>
+      <p>Pocket ZIP을 보관하고 있다면 압축을 풀고 CSV를 선택하세요. 가져올 수 있는 형식은 다음과 같습니다.</p>
+      <ul>
+        <li>Pocket 내보내기 CSV</li>
+        <li>Pocket 옛 HTML 내보내기 파일</li>
+        <li>Instapaper CSV</li>
+        <li>브라우저 북마크 HTML</li>
+      </ul>
+      <p>PageBunker 백업 JSON은 가져오기 파일과 다른 복원용 파일입니다. 예를 들어 <code>pagebunker-latest.json</code>은 기존 PageBunker 보관함을 복원할 때 사용합니다.</p>
+      <p>Instapaper는 이미 보유한 CSV를 선택하는 절차만 안내합니다. <a href="https://www.instapaper.com/docs/account/export-and-download">공식 내보내기 도움말</a>에 CSV 설명이 있지만, 로그인 후 현재 메뉴 경로와 실제 다운로드는 확인하지 않았으므로 메뉴 경로를 적지 않습니다.</p>
+      <p class="source">지원 형식 근거: <a href="https://github.com/elitekid/pagebunker#import--export">PageBunker 공식 README의 가져오기·내보내기</a>.</p>
+    </section>
+    <section id="backup">
+      <h2>3. 가져오기 전 보관함 보호</h2>
+      <p>기존 PageBunker 보관함이 있다면 <code>Downloads/PageBunker/pagebunker-latest.json</code>을 다른 폴더에도 복사한 뒤 진행하세요. 가져오기와 백업 복원은 다른 작업입니다.</p>
+      <p>작업 중인 보관함은 브라우저 안에 있고, 글이 바뀌면 다운로드 폴더의 백업 파일도 갱신됩니다. 가져오기 전 사본을 별도로 보관하면 이후 갱신되는 백업과 구별할 수 있습니다.</p>
+      <div class="honest">이 글의 툴바 저장 안내는 PageBunker 1.1.0 설명 기준입니다. 2026-09-18 기준 엣지는 1.1.0 공개, 크롬은 1.0.0 공개·1.1.0 심사 중이며 파이어폭스 등록 페이지는 아직 공개되지 않았습니다. 크롬에서는 해당 업데이트 공개 후 툴바 안내를 따라 주세요. 이 상태는 <a href="https://github.com/elitekid/pagebunker#pagebunker">공식 README</a>의 확인일 기준 기록입니다.</div>
+    </section>
+    <section id="preview">
+      <h2>4. 미리보기와 확정</h2>
+      <ol>
+        <li>PageBunker 보관함에서 가져오기(Import)를 엽니다.</li>
+        <li>준비한 CSV 또는 지원되는 HTML 파일을 선택합니다.</li>
+        <li>미리보기의 제목과 링크를 살펴보고, 옮기려던 파일인지 확인합니다.</li>
+        <li>내용을 확인한 뒤 가져오기를 확정합니다.</li>
+      </ol>
+      <p>중복 링크 처리 방식, 지원 필드의 상세 목록, 오류 파일 처리 동작은 이번 자료 확인으로 확정하지 않았습니다. 태그나 읽음 상태가 모두 이전된다고 보장하지 않습니다.</p>
+      <p class="source">미리보기와 가져오기 절차 근거: <a href="https://github.com/elitekid/pagebunker#import--export">PageBunker 공식 README</a>. 배포본의 화면·동작을 이번 작성에서 직접 대조한 것은 아닙니다.</p>
+    </section>
+    <section id="body">
+      <h2>5. 링크에 본문 채우기</h2>
+      <p><strong>가져온 항목에는 링크만 있습니다.</strong> 접속 가능한 원문을 열고 PageBunker의 ‘이 글 저장’을 실행해야 본문이 들어옵니다. 가져오기가 원문 본문을 자동으로 일괄 다운로드하지는 않습니다.</p>
+      <p>원문이 열린 탭에서 툴바 버튼을 누른 뒤 ‘이 글 저장’을 선택하세요. 페이지 우클릭 메뉴의 ‘이 글 저장’이나 <code>Alt+Shift+L</code>(맥은 <code>Option+Shift+L</code>)도 사용할 수 있습니다. 본문 추출에 실패하면 링크만 저장됩니다.</p>
+      <p>이미 사라진 원문을 내보내기 링크만으로 되살릴 수는 없습니다. 본문이 저장되었는지는 보관함의 읽기 화면을 열어 확인하세요.</p>
+      <p class="source">본문 저장·추출 실패 동작 근거: <a href="https://github.com/elitekid/pagebunker#features">PageBunker 공식 기능 설명</a>.</p>
+    </section>
+    <section id="offline">
+      <h2>6. 오프라인 읽기와 검색 확인</h2>
+      <p>다음은 독자가 확인할 수 있는 절차이며, 이 글에서 수행한 시험 결과가 아닙니다.</p>
+      <ol>
+        <li>제목에는 없고 본문에만 있는 한글·영어 구절을 고릅니다. 링크 가져오기 직후와 본문 저장 후에 각각 보관함에서 검색해 결과를 구분해 기록하세요.</li>
+        <li>본문을 저장한 뒤 네트워크를 끊고 보관함에서 글을 다시 열어 글자가 보이는지 확인하세요.</li>
+        <li>본문이 저장된 항목과 링크만 있는 항목을 따로 기록하세요. 링크만 있는 항목에는 오프라인으로 읽을 본문이 없습니다.</li>
+      </ol>
+      <p>PageBunker의 한국어·영어 검색 대상은 저장한 본문과 제목·사이트·태그입니다. 아직 저장하지 않은 원문 본문까지 검색하지는 않습니다.</p>
+      <div class="honest">이미지는 오프라인 보관 대상이 아닙니다. 기본으로 불러오지 않으며, 이미지 보기나 원문 열기는 해당 사이트에 연결해야 합니다. 저장된 글자의 오프라인 읽기와 이미지 표시를 같은 결과로 기록하지 마세요.</div>
+      <p class="source">검색·오프라인 조건 근거: <a href="https://github.com/elitekid/pagebunker#features">PageBunker 공식 README</a>. 시험할 때에는 제품 버전, 브라우저 버전, 시험 날짜, 예시 문서와 실제 결과를 함께 남기세요. 이번 문서에는 실사용 시험일·결과가 없습니다.</p>
+    </section>
+    <section id="undo">
+      <h2>7. 잘못 가져왔을 때</h2>
+      <p>가져오기 작업 전체를 되돌릴 수 있습니다. 이는 PageBunker 백업 JSON으로 보관함을 복원하는 작업과 구별됩니다.</p>
+      <p>백업 JSON으로 복원할 때에는 병합과 교체를 구분해 선택하세요. 교체 복원은 한 번 되돌릴 수 있습니다. 확장을 지운 경우에는 다시 설치한 뒤 남아 있는 백업 파일로 백업된 보관함을 복원할 수 있습니다.</p>
+      <p>되돌리기·복원을 시험하려면 별도 브라우저 시험 프로필의 예시 데이터에서 확인하세요. 이 글에서는 실제 배포본의 세부 메뉴 위치나 확인 창을 검증하지 않았습니다.</p>
+      <p class="source">작업 단위 되돌리기·복원 방식 근거: <a href="https://github.com/elitekid/pagebunker#features">PageBunker 공식 README</a>.</p>
+    </section>
+    <section id="limits">
+      <h2>8. 해결하지 못하는 경우</h2>
+      <p>파일이 없거나 원문에 접근할 수 없으면 본문 이전이 제한됩니다. 원문에 접근할 수 있어도 본문 추출에 실패하면 링크만 남습니다. 이미지는 오프라인 보관되지 않습니다.</p>
+      <p>PageBunker는 기기 자동 동기화나 모바일 앱을 제공하지 않습니다. 다른 컴퓨터로 옮기려면 백업 JSON을 직접 복사해 복원할 수 있지만, 이는 자동 동기화가 아닙니다. 백업도 파일 삭제나 디스크 고장을 막아 주지는 않으므로 필요한 사본은 따로 보관하세요.</p>
+      <p>보관 방식부터 고르고 싶다면 <a href="read-later-without-account.html">계정 없이 나중에 읽기 — 로컬 확장·파일 저장·서버형 도구 비교</a>를 읽어 보세요.</p>
+      <p class="source">제품 사실의 공개 근거: <a href="https://github.com/elitekid/pagebunker">PageBunker 공식 README</a>. 정정할 내용은 <a href="https://github.com/elitekid/pagebunker/issues">공식 저장소 이슈</a>에 제품·브라우저 버전, 확인일과 재현 결과를 함께 남길 수 있습니다.</p>
+    </section>
+  </div>
+</article>
+</main>
+<footer><div class="wrap">PageBunker 제작자 작성 · <a href="../index.html">공식 사이트</a> · <a href="../privacy/">개인정보 처리방침</a> · <a href="https://github.com/elitekid/pagebunker">소스 코드</a></div></footer>
+</body>
+</html>

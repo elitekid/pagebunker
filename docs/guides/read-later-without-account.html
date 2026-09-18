@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>계정 없이 나중에 읽기 — PageBunker·SingleFile·wallabag·Instapaper 비교</title>
+<meta name="description" content="계정 없는 로컬 보관과 서버·계정형 읽기 도구의 차이. PageBunker, SingleFile, wallabag, Instapaper를 저장 방식·오프라인 조건·검색·이동 기준으로 비교합니다.">
+<link rel="icon" href="../assets/icon128.png">
+<style>
+  :root { --ink:#1b1f24; --muted:#5b6470; --line:#e3e6ea; --bg:#fafbfc; --card:#fff; --link:#1f5fbf; --navy:#16213a; --navy2:#2b3a55; --accent:#3fc8a8; --warn:#b3540b; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:-apple-system,"Segoe UI",Inter,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; color:var(--ink); background:var(--bg); line-height:1.75; overflow-wrap:anywhere; }
+  .wrap { max-width:960px; margin:0 auto; padding:0 20px; }
+  nav { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+  nav .brand { display:flex; align-items:center; gap:10px; font-weight:700; text-decoration:none; color:var(--ink); }
+  nav .brand img { width:28px; height:28px; border-radius:7px; }
+  nav .links a { margin-left:16px; color:var(--muted); font-size:14px; }
+  a { color:var(--link); text-underline-offset:3px; }
+  a:focus-visible, .table-scroll:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  header.hero { background:radial-gradient(circle at 15% 15%, var(--navy2) 0, var(--navy) 60%); color:#fff; padding:48px 0; }
+  .hero h1 { font-size:38px; line-height:1.3; margin:0 0 18px; letter-spacing:-1px; }
+  .hero .lead { color:#dbe3f0; font-size:18px; }
+  .hero .meta { color:#dbe3f0; font-size:14px; }
+  .hero .summary { border-left:3px solid var(--accent); padding-left:16px; color:#dbe3f0; font-size:15px; }
+  .toc { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin:32px 0; }
+  .toc ol { margin-bottom:0; }
+  section { padding:32px 0; }
+  section + section { border-top:1px solid var(--line); }
+  h2 { font-size:26px; line-height:1.4; margin:0 0 14px; letter-spacing:-.5px; }
+  h3 { font-size:20px; margin:26px 0 10px; }
+  p { margin:12px 0; }
+  li + li { margin-top:8px; }
+  .table-scroll { overflow-x:auto; margin:20px 0; }
+  table { width:100%; min-width:700px; border-collapse:collapse; background:var(--card); font-size:14px; }
+  caption { text-align:left; font-weight:600; padding:0 0 10px; }
+  th, td { border:1px solid var(--line); padding:12px; text-align:left; vertical-align:top; }
+  th { background:#f1f3f6; }
+  .honest { border-left:4px solid var(--warn); background:#fff6ee; padding:12px 16px; border-radius:6px; margin-top:18px; font-size:15px; }
+  .source { color:var(--muted); font-size:14px; }
+  code { background:#f1f3f6; padding:1px 6px; border-radius:4px; font-size:13px; }
+  footer { color:var(--muted); font-size:13px; padding:34px 0 54px; border-top:1px solid var(--line); }
+  @media (max-width:760px) { .hero h1 { font-size:30px; } h2 { font-size:23px; } .toc { padding:16px; } nav .links a { margin-left:0; margin-right:12px; } }
+  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+<nav aria-label="사이트 탐색">
+  <a class="brand" href="../index.html"><img src="../assets/icon128.png" alt="">PageBunker</a>
+  <div class="links"><a href="../index.html">홈</a><a href="import-pocket-instapaper.html">파일 가져오기</a></div>
+</nav>
+<main>
+<article>
+  <header class="hero"><div class="wrap">
+    <h1>계정 없이 나중에 읽기</h1>
+    <p class="lead">로컬 확장·파일 저장·서버형 도구를 보관 목적과 사용 조건으로 비교합니다.</p>
+    <p>이 문서는 PageBunker 제작자가 작성했습니다. 제품 설명 확인일과 실제 시험일을 구분해 기록합니다. 경쟁 도구는 같은 조건을 충족하는 경우에만 비교합니다.</p>
+    <p class="meta">자료 조사·제품 설명 확인일: <time datetime="2026-09-18">2026-09-18</time> · 실제 시험일: 이번 문서 작성에서는 실사용 시험을 수행하지 않았습니다.</p>
+    <p class="summary" lang="en">PageBunker offers a local reading library without an account; SingleFile saves standalone HTML pages. wallabag uses a server and user account, while Instapaper offers account-based mobile reading and sync. Offline images and search have different conditions across these tools. This maker-written comparison uses official documentation reviewed on September 18, 2026, and identified source-code evidence, not hands-on test results.</p>
+  </div></header>
+  <div class="wrap">
+    <aside class="toc" aria-labelledby="contents">
+      <h2 id="contents">목차</h2>
+      <ol>
+        <li><a href="#accounts">계정 없음과 서버 없음 구분</a></li>
+        <li><a href="#material">어떤 자료를 보관할 것인가</a></li>
+        <li><a href="#comparison">비교 범위와 출처</a></li>
+        <li><a href="#check">같은 자료로 확인하는 방법</a></li>
+        <li><a href="#choose">조건별 선택</a></li>
+        <li><a href="#limits">손실과 이동의 한계</a></li>
+        <li><a href="#record">확인 기록·정정</a></li>
+      </ol>
+    </aside>
+    <section id="accounts">
+      <h2>1. 계정 없음과 서버 없음 구분</h2>
+      <p>계정 없이 파일로 저장하는 방식과, 자신이 운영하는 서버에 로그인하는 방식은 다릅니다. 원하는 조건이 가입 없는 사용인지, 서버 운영 없는 사용인지 먼저 구분하세요.</p>
+      <p>PageBunker는 계정이나 글 보관 서버 없이 기기의 브라우저에 본문을 저장합니다. SingleFile의 기본 로컬 저장도 별도 서비스 가입 단계 없이 사용하는 흐름입니다. 이는 공식 시작 절차와 기본 기기 내 처리를 안내한 개인정보 정책에 근거한 판단이며, 외부 업로드 옵션까지 모두 서버 없이 작동한다는 뜻은 아닙니다.</p>
+      <p>wallabag은 직접 설치한 서버나 관리형 서비스 wallabag.it를 사용하며, 브라우저 확장에도 서버와 사용자 계정을 연결합니다. 관리형 서비스를 고르면 직접 서버를 운영할 필요는 없지만 계정은 필요합니다. Instapaper도 계정 기반 서비스입니다.</p>
+      <p class="source">근거: <a href="https://github.com/elitekid/pagebunker">PageBunker README</a>, <a href="https://github.com/gildas-lormeau/SingleFile#getting-started">SingleFile 시작 절차</a>·<a href="https://github.com/gildas-lormeau/SingleFile/blob/master/privacy.md">개인정보 정책</a>, <a href="https://wallabag.org/">wallabag 공식 사이트</a>·<a href="https://doc.wallabag.org/user/articles/save/">확장 설정</a>, <a href="https://www.instapaper.com/premium">Instapaper 공식 기능표</a>.</p>
+    </section>
+    <section id="material">
+      <h2>2. 어떤 자료를 보관할 것인가</h2>
+      <p>PageBunker는 읽기용 본문과 검색 가능한 보관함을 다룹니다. SingleFile은 웹페이지를 한 HTML 파일로 보존하는 도구입니다. 원래 페이지 형태를 보관하는 일과 글만 편하게 읽는 일은 비교 기준이 다릅니다.</p>
+      <p>PageBunker는 광고·메뉴·댓글을 빼고 본문을 추출합니다. SingleFile은 이미지·스타일시트·폰트 등을 HTML에 포함해 페이지를 보존합니다. 모든 사이트에서 이미지가 보존된다는 보장은 아니며, 공식 FAQ에는 Referer 요구 때문에 이미지 저장이 실패하는 사례도 설명되어 있습니다.</p>
+      <p>여러 클라이언트에서 읽을 글을 관리하려면 서버형 구조도 비교할 수 있습니다. wallabag은 본문을 추출해 서버에 보관하며, Instapaper는 웹·iOS·Android 사이의 동기화를 제공합니다.</p>
+      <p class="source">근거: <a href="https://github.com/elitekid/pagebunker#features">PageBunker 기능 설명</a>, <a href="https://www.getsinglefile.com/">SingleFile 공식 소개</a>·<a href="https://github.com/gildas-lormeau/SingleFile/blob/master/faq.md">FAQ</a>, <a href="https://doc.wallabag.org/">wallabag 공식 문서</a>, <a href="https://www.instapaper.com/premium">Instapaper 기능표</a>.</p>
+    </section>
+    <section id="comparison">
+      <h2>3. 비교 범위와 출처</h2>
+      <p>아래 표는 공식 설명으로 확인한 기능을 다룹니다. 실제 사용 환경에서의 재현 여부는 시험하지 않았습니다. 계정 없는 후보와 서버·계정형 대조군을 나누며 전체 도구의 우열 순위를 매기지 않습니다. 각 칸의 근거는 행 끝에 연결했습니다.</p>
+      <div class="table-scroll" role="region" aria-label="도구별 저장 조건 비교표" tabindex="0">
+        <table>
+          <caption>공식 설명 기준 저장 조건 — 2026-09-18 자료 확인</caption>
+          <thead><tr><th scope="col">도구·비교 위치</th><th scope="col">계정·서버 조건</th><th scope="col">저장·오프라인 조건</th><th scope="col">파일 이동·사용 범위와 근거</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row">PageBunker<br>무계정 보관함 후보</th>
+              <td>PageBunker 계정·글 보관 서버 없이 사용합니다.</td>
+              <td>본문은 브라우저에, JSON 백업은 Downloads에 보관합니다. 저장한 글자는 오프라인에서 읽을 수 있습니다. 이미지는 보관하지 않으며 원문 연결이 필요합니다.</td>
+              <td>JSON을 수동 복사해 복원하고 HTML·Markdown으로 내보냅니다. 자동 동기화·모바일 앱은 없습니다. <a href="https://github.com/elitekid/pagebunker#features">기능</a>·<a href="https://github.com/elitekid/pagebunker#where-your-data-lives">저장 위치</a></td>
+            </tr>
+            <tr>
+              <th scope="row">SingleFile<br>파일 저장 후보</th>
+              <td>기본 시작 절차에는 별도 서비스 가입 단계가 없습니다. Google Drive·GitHub·Amazon S3·WebDAV 업로드는 선택 기능입니다.</td>
+              <td>이미지·스타일 등을 포함한 단일 HTML을 기본적으로 브라우저의 다운로드 폴더에 저장합니다. 확장 없이 오프라인 열람할 수 있지만 사이트에 따라 이미지 저장이 실패할 수 있습니다.</td>
+              <td>한 페이지를 독립 HTML 파일로 보존합니다. 읽기 보관함과 다른 형태의 결과물입니다. <a href="https://github.com/gildas-lormeau/SingleFile">README</a>·<a href="https://www.getsinglefile.com/">공식 소개</a>·<a href="https://github.com/gildas-lormeau/SingleFile/blob/master/faq.md">FAQ</a></td>
+            </tr>
+            <tr>
+              <th scope="row">wallabag<br>서버형 대조군</th>
+              <td>자체 서버 또는 관리형 wallabag.it를 선택합니다. 확장에도 서버 주소·API 클라이언트 정보·사용자 자격증명이 필요합니다.</td>
+              <td>서버에 본문을 추출해 저장합니다. 공식 Android 앱은 동기화한 글의 오프라인 읽기와 기기 내 이미지 캐시를 제공합니다. 서버의 이미지 보관 설정은 모바일 캐시와 별개입니다.</td>
+              <td>여러 클라이언트를 선택할 수 있습니다. 문서상 ePub·PDF·XML·JSON·CSV 내보내기를 제공하며 실제 메뉴는 서버 설정에 영향을 받습니다. <a href="https://wallabag.org/">사용 형태</a>·<a href="https://doc.wallabag.org/user/articles/save/">확장 설정</a>·<a href="https://doc.wallabag.org/apps/android/">Android</a>·<a href="https://doc.wallabag.org/admin/internal_settings/">서버 설정</a>·<a href="https://doc.wallabag.org/user/articles/download/">내보내기</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Instapaper<br>계정형 대조군</th>
+              <td>계정으로 사용하며 웹·iOS·Android 사이의 동기화를 제공합니다.</td>
+              <td>iOS·Android 앱에서 인터넷 연결 중 미읽은 글을 다운로드한 뒤 오프라인으로 읽을 수 있습니다. 서버 저장과 기기 다운로드를 구분해야 합니다.</td>
+              <td>공개 도움말은 계정 데이터 CSV와 읽기 목록 PDF·ePub·RSS를 안내합니다. PDF·ePub 묶음은 목록 첫 19개 글입니다. 현재 메뉴는 직접 확인하지 않았습니다. <a href="https://www.instapaper.com/premium">기능표</a>·<a href="https://www.instapaper.com/docs/getting-started/mobile-apps">모바일</a>·<a href="https://www.instapaper.com/docs/account/export-and-download">내보내기</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>검색은 확인된 범위만 따로 비교합니다</h3>
+      <ul>
+        <li><strong>PageBunker:</strong> 저장된 한국어·영어 본문과 제목·사이트·태그를 검색합니다. 링크만 가져온 항목의 미저장 원문은 검색 대상이 아닙니다. <a href="https://github.com/elitekid/pagebunker#features">공식 README</a></li>
+        <li><strong>wallabag:</strong> 공식 2.6.14 소스의 검색 조건에 본문·제목·URL이 포함되어 있습니다. 이는 문서의 직접 선언이나 실사용 시험이 아닌 <strong>공식 소스 해석</strong>입니다. 미읽음·즐겨찾기·보관 화면에서는 대상 글이 해당 범주로 제한될 수 있습니다. <a href="https://github.com/wallabag/wallabag/blob/2.6.14/src/Wallabag/CoreBundle/Repository/EntryRepository.php">2.6.14 검색 구현</a></li>
+        <li><strong>Instapaper:</strong> 보관한 글을 포함한 전체 본문 검색은 Premium 기능입니다. 무료 모바일 앱은 제목 검색을 제공하고, 공개 도움말 기준 웹에서는 무료 제목 검색을 제공하지 않습니다. <a href="https://www.instapaper.com/docs/search/overview">공식 검색 도움말</a></li>
+      </ul>
+      <p>SingleFile의 여러 저장 파일을 한꺼번에 검색하는 내장 보관함은 확인한 공식 문서에서 확정할 수 없어 검색 비교에서 제외했습니다. 파일이 색인될 수 있다는 설명만으로 내장 검색이 있거나 없다고 단정하지 않습니다. <a href="https://github.com/gildas-lormeau/SingleFile#file-format-comparison">공식 파일 형식 비교</a></p>
+      <p class="source">Instapaper 모바일 이미지의 오프라인 조건, wallabag iOS의 세부 오프라인 동작과 MOBI 내보내기는 비교 항목에서 제외했습니다. 확인되지 않은 기능을 ‘없음’으로 표시하지 않았습니다.</p>
+    </section>
+    <section id="check">
+      <h2>4. 같은 자료로 확인하는 방법</h2>
+      <p>다음은 비교를 재현하기 위한 제안입니다. 이 문서 작성에서 실행한 시험이 아닙니다. 개인 데이터가 없는 예시 문서와 별도 시험 프로필을 사용하세요.</p>
+      <ol>
+        <li>동일한 예시 글을 각 도구에 저장하고 제품·앱 버전, 브라우저 버전, 요금제와 서버 설정을 기록합니다. 제목에는 없고 본문에만 있는 한글·영어 구절을 골라 검색 범위를 확인합니다.</li>
+        <li>모바일 앱은 글을 기기에 다운로드하거나 동기화한 다음 인터넷을 끊습니다. 같은 글을 다시 열어 글자와 이미지의 표시 여부를 각각 기록합니다.</li>
+        <li>PageBunker에서는 링크만 가져온 항목과 본문까지 저장한 항목을 따로 확인합니다. SingleFile에서는 저장한 HTML 자체를 열어 결과를 확인합니다.</li>
+        <li>실패한 이미지, 추출되지 않은 본문, 검색되지 않은 구절을 문서 URL·시험일·설정과 함께 기록합니다. 내장 검색과 별도로 설치한 검색 도구의 결과도 구분합니다.</li>
+      </ol>
+      <p>한 자료에서 성공한 결과를 모든 사이트에 적용하지 마세요. 이미지 저장, 본문 추출, 앱의 다운로드 여부가 서로 다른 조건이므로 각각의 결과가 필요합니다.</p>
+    </section>
+    <section id="choose">
+      <h2>5. 조건별 선택</h2>
+      <ul>
+        <li><strong>읽기 보관함·본문 검색·다운로드 폴더 백업:</strong> PageBunker를 검토할 수 있습니다. 계정 없이 로컬 본문을 관리하며, 이미지 오프라인 보관·자동 동기화·모바일 앱은 제공하지 않습니다.</li>
+        <li><strong>한 페이지를 독립 파일로 보관:</strong> SingleFile을 살펴보세요. 이미지와 스타일 등을 포함한 HTML이 필요할 때 비교할 수 있고, 실제 보존 결과는 대상 페이지로 확인해야 합니다.</li>
+        <li><strong>서버와 여러 클라이언트 사용:</strong> wallabag을 살펴보세요. 직접 서버와 백업을 관리하는 선택지가 있으며, 자체 호스팅은 운영·관리 작업을 수반합니다. 관리형 서비스도 선택할 수 있습니다.</li>
+        <li><strong>모바일 읽기와 계정 기반 동기화:</strong> Instapaper도 비교 대상입니다. 저장 글 전체 본문 검색이 필요하면 Premium 조건을 함께 확인하세요.</li>
+      </ul>
+      <p>이 선택 기준은 위 공식 설명을 사용 목적에 맞춰 정리한 것입니다. 동일 조건의 속도 측정이나 전체 도구의 순위는 제공하지 않습니다.</p>
+    </section>
+    <section id="limits">
+      <h2>6. 손실과 이동의 한계</h2>
+      <p>로컬 저장도 디스크 고장이나 파일 삭제를 막아 주지는 않습니다. PageBunker의 브라우저 보관함은 확장을 지우면 삭제되지만 다운로드 폴더의 백업은 따로 지우지 않는 한 남습니다. 다른 컴퓨터로 백업 파일을 직접 복사해 복원하는 것은 자동 동기화와 다릅니다.</p>
+      <p>PageBunker의 가져오기는 링크만 추가합니다. 원문에 접근해 본문을 따로 저장해야 하며, 추출에 실패하면 링크만 남습니다. 사라진 원문은 링크를 가져오는 것만으로 복구할 수 없습니다. 본문 저장이 끝난 글자는 오프라인에서 읽을 수 있지만 이미지는 오프라인 보관 대상이 아닙니다.</p>
+      <p>SingleFile의 독립 HTML, PageBunker의 복원용 JSON, 다른 도구의 내보내기 파일을 같은 복원 형식으로 취급하지 마세요. PageBunker의 지원 가져오기 형식과 복원용 JSON의 차이는 <a href="import-pocket-instapaper.html">Pocket·Instapaper 파일 가져오기 가이드</a>에서 확인할 수 있습니다.</p>
+      <p class="source">PageBunker의 백업·가져오기·이미지 조건 근거: <a href="https://github.com/elitekid/pagebunker">공식 README</a>.</p>
+    </section>
+    <section id="record">
+      <h2>7. 확인 기록·정정</h2>
+      <ul>
+        <li><strong>자료 확인일:</strong> <time datetime="2026-09-18">2026-09-18</time>. PageBunker 제품 문서와 각 도구의 공식 자료를 바탕으로 작성했습니다.</li>
+        <li><strong>제품 버전:</strong> PageBunker는 1.1.0 설명 기준입니다. wallabag 검색은 공식 2.6.14 소스 해석입니다. SingleFile·Instapaper와 모바일 앱의 설치 버전은 이번 작성에서 확인하지 않았습니다.</li>
+        <li><strong>실제 시험일·실패 사례:</strong> 이번 작성에서는 설치·저장·검색·오프라인 시험을 수행하지 않아 실측 기록이 없습니다. SingleFile 이미지 실패 사례는 공식 FAQ에 소개된 내용입니다.</li>
+        <li><strong>미확인:</strong> Instapaper의 현재 내보내기 메뉴와 모바일 이미지 오프라인 조건, SingleFile 내장 통합 검색, wallabag iOS 세부 동작·MOBI 지원은 확정하지 않았습니다. PageBunker 가져오기의 중복 처리·필드 상세·오류 파일 동작도 실측하지 않았습니다.</li>
+      </ul>
+      <p>공식 문서만 확인한 기능을 직접 검증했다고 표시하지 않습니다. 설명이 달라졌다면 <a href="https://github.com/elitekid/pagebunker/issues">PageBunker 공식 저장소 이슈</a>로 해당 절, 공식 출처, 제품·브라우저·앱 버전, 자료 확인일과 실제 시험일, 실패 사례를 알려 주세요.</p>
+    </section>
+  </div>
+</article>
+</main>
+<footer><div class="wrap">PageBunker 제작자 작성 · <a href="../index.html">공식 사이트</a> · <a href="../privacy/">개인정보 처리방침</a> · <a href="https://github.com/elitekid/pagebunker">소스 코드</a></div></footer>
+</body>
+</html>
