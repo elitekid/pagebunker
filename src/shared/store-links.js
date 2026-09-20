@@ -4,10 +4,9 @@ export const ISSUES_URL = 'https://github.com/elitekid/pagebunker/issues';
 export const SOURCE_URL = 'https://github.com/elitekid/pagebunker';
 
 export const STORE_REVIEW_URLS = {
-  // 스토어 등록 후 채운다
-  chrome: '',
-  edge: '',
-  firefox: '',
+  chrome: 'https://chromewebstore.google.com/detail/pagebunker/pbobkmgfnaffcckkggiajhjdbjplgpce/reviews',
+  edge: 'https://microsoftedge.microsoft.com/addons/detail/mmlfiljlnohhhjacaoniejfelagjcgna',
+  firefox: 'https://addons.mozilla.org/firefox/addon/pagebunker/reviews/',
 };
 
 /** 확장 실행 환경에서 스토어 종류 판별 */
