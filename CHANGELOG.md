@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1 — 2026-09-24
+
+- Reader: the article title no longer appears twice when the page repeats it at the top of the article body. This mostly affected Korean articles, because the extraction library compares titles using Latin letters only.
+- Reader: short articles (under about 500 characters) no longer show the author line twice.
+- An author name inside an author card (photo, name, and bio) is kept.
+- Articles saved before this update are not changed.
+
 ## 1.1.0 — 2026-09-17
 
 - Toolbar icon opens a popup panel (380×580) instead of saving immediately. The panel shows backup status, the current page (save / already saved / can't save), your five most recent articles with search, and links to the full library and settings. Opening the popup never saves by itself.

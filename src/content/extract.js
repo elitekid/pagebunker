@@ -61,6 +61,83 @@
     return text.split(/\n\s*\n/).filter((p) => p.trim()).length;
   }
 
+  // 본문 맨 앞 블록이 머리 제목·글쓴이와 공백만 다르면 뺀다. 라이브러리의 제목 비교는 영문자 단위라
+  // 한글 제목을 같은 제목으로 못 알아보고, 500자 미만 글은 다시 추출하면서 이미 찾은 글쓴이 줄을 남긴다
+  const WRAPPER_TAGS = new Set(['DIV', 'SECTION', 'ARTICLE', 'HEADER', 'HGROUP', 'MAIN']);
+  const BLOCK_TAGS = new Set([...WRAPPER_TAGS, 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'ADDRESS', 'BLOCKQUOTE',
+    'PRE', 'UL', 'OL', 'LI', 'DL', 'DT', 'DD', 'TABLE', 'FIGURE', 'FIGCAPTION', 'HR', 'ASIDE', 'FOOTER', 'NAV']);
+
+  function squash(s) {
+    return String(s || '').normalize('NFC').replace(/\s+/g, '').toLowerCase();
+  }
+
+  function hasText(n) {
+    return (n.nodeType === Node.ELEMENT_NODE || n.nodeType === Node.TEXT_NODE) && n.textContent.trim();
+  }
+
+  const LEADING_LINES = 3;
+
+  function nextWithText(node) {
+    let next = node.nextSibling;
+    while (next && !hasText(next)) next = next.nextSibling;
+    return next;
+  }
+
+  // 한 줄을 혼자 차지하는 요소만 뺀다. 문장 앞 글쓴이 링크처럼 뒤에 글이 이어지는 인라인 요소는 남긴다
+  function standsAlone(el) {
+    if (BLOCK_TAGS.has(el.tagName)) return true;
+    const next = nextWithText(el);
+    return !next || (next.nodeType === Node.ELEMENT_NODE && BLOCK_TAGS.has(next.tagName));
+  }
+
+  // 글쓴이 카드(사진·이름·소개 글)의 이름 줄은 남긴다. 이름 뒤에 글이 이어지는 작은 상자면 카드로 본다
+  function inAuthorCard(el, totalLen) {
+    return !!nextWithText(el) && squash(el.parentNode.textContent).length < totalLen / 2;
+  }
+
+  // 본문 앞쪽 줄을 문서 순서로 돌려준다. 감싸는 요소는 안으로 들어가되, 머리와 같은 글이면 통째로 돌려준다
+  function* leadingLines(el, targets) {
+    for (const n of [...el.childNodes]) {
+      if (!hasText(n)) continue;
+      if (n.nodeType === Node.ELEMENT_NODE && WRAPPER_TAGS.has(n.tagName) && !targets.includes(squash(n.textContent))) {
+        yield* leadingLines(n, targets);
+      } else {
+        yield n;
+      }
+    }
+  }
+
+  // 앞쪽 몇 줄 안에서 머리 제목과 같은 줄, 머리 글쓴이와 같은 줄을 한 번씩 뺀다(분류 표시 뒤에 제목이 오는 뉴스 화면 포함)
+  function stripLeadingDuplicates(html, title, byline) {
+    const t = squash(title);
+    const b = squash(byline);
+    if (!t && !b) return null;
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const totalLen = squash(doc.body.textContent).length;
+    const lines = [];
+    for (const line of leadingLines(doc.body, [t, b].filter(Boolean))) {
+      lines.push(line);
+      if (lines.length >= LEADING_LINES) break;
+    }
+    let titleLeft = !!t;
+    let bylineLeft = !!b;
+    let removed = 0;
+    for (const line of lines) {
+      if (line.nodeType !== Node.ELEMENT_NODE || !standsAlone(line)) continue;
+      const s = squash(line.textContent);
+      if (titleLeft && s === t) {
+        titleLeft = false;
+      } else if (bylineLeft && s === b && !inAuthorCard(line, totalLen)) {
+        bylineLeft = false;
+      } else {
+        continue;
+      }
+      line.remove();
+      removed++;
+    }
+    return removed ? { html: doc.body.innerHTML, text: doc.body.textContent } : null;
+  }
+
   function fail(reason, extra = {}) {
     return {
       ok: false,
@@ -108,8 +185,9 @@
     }
 
     const baseURI = document.baseURI || location.href;
-    const sanitized = globalThis.ReadLaterSanitize.sanitizeHtml(article.content, baseURI);
-    const text = article.textContent || '';
+    const deduped = stripLeadingDuplicates(article.content, article.title || docTitle, article.byline);
+    const sanitized = globalThis.ReadLaterSanitize.sanitizeHtml(deduped ? deduped.html : article.content, baseURI);
+    const text = deduped ? deduped.text : article.textContent || '';
     const htmlBytes = utf8Bytes(sanitized);
 
     if (htmlBytes > HTML_BYTE_LIMIT) {
