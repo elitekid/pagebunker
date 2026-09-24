@@ -8,7 +8,7 @@ PageBunker is a Chrome, Edge, and Firefox extension that saves the article you a
 
 **Install:** [Chrome Web Store](https://chromewebstore.google.com/detail/pagebunker/pbobkmgfnaffcckkggiajhjdbjplgpce) · [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/pagebunker/mmlfiljlnohhhjacaoniejfelagjcgna) · [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/pagebunker/)
 
-Version 1.1.0 is available in all three stores as of September 21, 2026.
+Version 1.1.1 is available in all three stores as of September 24, 2026.
 
 ![PageBunker library](docs/assets/library-en.png)
 
