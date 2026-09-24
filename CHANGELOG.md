@@ -5,6 +5,7 @@
 - Reader: the article title no longer appears twice when the page repeats it at the top of the article body. This mostly affected Korean articles, because the extraction library compares titles using Latin letters only.
 - Reader: short articles (under about 500 characters) no longer show the author line twice.
 - An author name inside an author card (photo, name, and bio) is kept.
+- The one-time review banner (shown after 48 hours, 5 saved articles, and a successful file backup) now links to the store review page for your browser.
 - Articles saved before this update are not changed.
 
 ## 1.1.0 — 2026-09-17
