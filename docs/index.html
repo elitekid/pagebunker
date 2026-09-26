@@ -206,5 +206,23 @@
   apply(saved ? saved === 'ko' : (navigator.language || '').toLowerCase().startsWith('ko'));
   btn.addEventListener('click', () => { const ko = !document.body.classList.contains('ko'); apply(ko); localStorage.setItem('pb-lang', ko ? 'ko' : 'en'); });
 </script>
+<script>
+  (() => {
+    const inbound = new URLSearchParams(location.search);
+    let tags = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].filter((k) => inbound.get(k)).map((k) => [k, inbound.get(k).slice(0, 40)]);
+    if (!tags.length) {
+      let ref = '';
+      try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch {}
+      tags = ref && ref !== location.hostname
+        ? [['utm_source', ref.slice(0, 40)], ['utm_medium', 'referral'], ['utm_campaign', 'pb-home']]
+        : [['utm_source', 'site'], ['utm_medium', 'direct'], ['utm_campaign', 'pb-home']];
+    }
+    document.querySelectorAll('a[href^="https://chromewebstore.google.com/"], a[href^="https://addons.mozilla.org/"], a[href^="https://microsoftedge.microsoft.com/"]').forEach((a) => {
+      const url = new URL(a.href);
+      for (const [k, v] of tags) url.searchParams.set(k, v);
+      a.href = url.toString();
+    });
+  })();
+</script>
 </body>
 </html>
