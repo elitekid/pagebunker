@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2 — 2026-09-26
+
+- The Chrome Web Store and Edge Add-ons name is now "PageBunker - Read Later & Offline Reading" (Korean: "PageBunker - 웹페이지 저장·오프라인 읽기"). The toolbar panel and the reader still say PageBunker, and backups still go to Downloads/PageBunker.
+- No other changes. Firefox stays on 1.1.1 with the name PageBunker.
+
 ## 1.1.1 — 2026-09-24
 
 - Reader: the article title no longer appears twice when the page repeats it at the top of the article body. This mostly affected Korean articles, because the extraction library compares titles using Latin letters only.

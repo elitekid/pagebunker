@@ -2,6 +2,9 @@
   "extName": {
     "message": "PageBunker"
   },
+  "extStoreName": {
+    "message": "PageBunker - Read Later & Offline Reading"
+  },
   "extDescription": {
     "message": "Save the full text of articles to your own computer, read offline, and search them later. No account, no server."
   },

@@ -2,6 +2,9 @@
   "extName": {
     "message": "PageBunker"
   },
+  "extStoreName": {
+    "message": "PageBunker - 웹페이지 저장·오프라인 읽기"
+  },
   "extDescription": {
     "message": "읽고 싶은 글의 본문을 내 컴퓨터에 저장해 인터넷 없이 읽고 내용으로 찾아요. 다운로드 폴더에 백업 파일을 자동으로 남기고, 계정은 필요 없어요."
   },
