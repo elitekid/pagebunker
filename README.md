@@ -125,6 +125,8 @@ Bug reports, import failures, and backup or restore questions are welcome via Gi
 - [Import failed](.github/ISSUE_TEMPLATE/import_failed.md)
 - [Backup and restore](.github/ISSUE_TEMPLATE/backup_restore.md)
 
+Using PageBunker? You can also leave an optional [usage note](https://github.com/elitekid/pagebunker/issues/new?template=usage_note.md) — where you found it, what you used before, and the first thing you did. No review or rating needed.
+
 ---
 
 **TabBunker** — close your tabs and keep a backup in your Downloads folder. [Website](https://elitekid.github.io/tabbunker/)
