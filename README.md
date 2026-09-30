@@ -2,13 +2,15 @@
 
 **Save articles. Read offline.**
 
-PageBunker is a Chrome, Edge, and Firefox extension that saves the article you are reading to your own device. No account, no server. Saved articles open offline and after the original page is gone, full-text search covers the body, and a backup file is kept in your Downloads folder. MIT licensed. No device sync, no mobile app.
+PageBunker is a Chrome, Edge, Firefox, and Whale extension that saves the article you are reading to your own device. No account, no server. Saved articles open offline and after the original page is gone, full-text search covers the body, and a backup file is kept in your Downloads folder. MIT licensed. No device sync, no mobile app.
 
 [Website](https://elitekid.github.io/pagebunker/) · [Privacy policy](PRIVACY.md) · [Report a problem](https://github.com/elitekid/pagebunker/issues)
 
 **Install:** [Chrome Web Store](https://chromewebstore.google.com/detail/pagebunker/pbobkmgfnaffcckkggiajhjdbjplgpce) · [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/pagebunker/mmlfiljlnohhhjacaoniejfelagjcgna) · [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/pagebunker/)
 
 As of September 27, 2026, the Chrome Web Store and Microsoft Edge Add-ons offer version 1.1.2, and Firefox Add-ons offers 1.1.1. The only change in 1.1.2 is the store name on Chrome and Edge.
+
+[Whale Store](https://store.whale.naver.com/detail/ojlgpkfjdhcoihcmkjhkmeinjbccifia) offers version 1.1.0 as of September 30, 2026.
 
 ![PageBunker library](docs/assets/library-en.png)
 
