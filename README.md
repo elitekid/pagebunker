@@ -10,7 +10,7 @@ PageBunker is a Chrome, Edge, Firefox, and Whale extension that saves the articl
 
 As of September 27, 2026, the Chrome Web Store and Microsoft Edge Add-ons offer version 1.1.2, and Firefox Add-ons offers 1.1.1. The only change in 1.1.2 is the store name on Chrome and Edge.
 
-[Whale Store](https://store.whale.naver.com/detail/ojlgpkfjdhcoihcmkjhkmeinjbccifia) offers version 1.1.0 as of September 30, 2026.
+[Whale Store](https://store.whale.naver.com/detail/ojlgpkfjdhcoihcmkjhkmeinjbccifia) offers version 1.1.2 as of October 1, 2026.
 
 ![PageBunker library](docs/assets/library-en.png)
 
