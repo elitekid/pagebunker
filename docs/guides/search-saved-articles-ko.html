@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>저장한 기사 본문을 PageBunker에서 검색하기</title>
+<meta name="description" content="데스크톱 브라우저의 PageBunker 보관함에서 저장한 기사 여러 편의 본문을 한꺼번에 검색합니다. 계정과 서버는 없습니다. 본문 검색은 본문이 저장된 기사에 적용됩니다.">
+<link rel="icon" href="../assets/icon128.png">
+<link rel="alternate" hreflang="ko" href="search-saved-articles-ko.html">
+<link rel="alternate" hreflang="en" href="search-saved-articles.html">
+<style>
+  :root { --ink:#1b1f24; --muted:#5b6470; --line:#e3e6ea; --bg:#fafbfc; --card:#fff; --link:#1f5fbf; --navy:#16213a; --navy2:#2b3a55; --accent:#3fc8a8; --warn:#b3540b; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:-apple-system,"Segoe UI",Inter,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; color:var(--ink); background:var(--bg); line-height:1.75; overflow-wrap:anywhere; }
+  .wrap { max-width:960px; margin:0 auto; padding:0 20px; }
+  nav { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+  nav .brand { display:flex; align-items:center; gap:10px; font-weight:700; text-decoration:none; color:var(--ink); }
+  nav .brand img { width:28px; height:28px; border-radius:7px; }
+  nav .links a { margin-left:16px; color:var(--muted); font-size:14px; }
+  a { color:var(--link); text-underline-offset:3px; }
+  a:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  header.hero { background:radial-gradient(circle at 15% 15%, var(--navy2) 0, var(--navy) 60%); color:#fff; padding:48px 0; }
+  .hero h1 { font-size:38px; line-height:1.3; margin:0 0 18px; letter-spacing:-1px; }
+  .hero .lead { color:#dbe3f0; font-size:18px; }
+  .hero .meta { color:#dbe3f0; font-size:14px; }
+  .toc { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin:32px 0; }
+  .toc ol { margin-bottom:0; }
+  section { padding:32px 0; }
+  section + section { border-top:1px solid var(--line); }
+  h2 { font-size:26px; line-height:1.4; margin:0 0 14px; letter-spacing:-.5px; }
+  p { margin:12px 0; }
+  li + li { margin-top:8px; }
+  .honest { border-left:4px solid var(--warn); background:#fff6ee; padding:12px 16px; border-radius:6px; margin-top:18px; font-size:15px; }
+  .source { color:var(--muted); font-size:14px; }
+  code { background:#f1f3f6; padding:1px 6px; border-radius:4px; font-size:13px; }
+  figure { margin:18px 0 8px; }
+  figure img { width:100%; height:auto; border:1px solid var(--line); border-radius:12px; background:#0e1626; }
+  figcaption { color:var(--muted); font-size:14px; margin-top:8px; }
+  .install { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+  .install a { display:inline-block; background:var(--navy); color:#fff; text-decoration:none; border-radius:8px; padding:8px 14px; font-size:14px; }
+  footer { color:var(--muted); font-size:13px; padding:34px 0 54px; border-top:1px solid var(--line); }
+  @media (max-width:760px) { .hero h1 { font-size:30px; } h2 { font-size:23px; } .toc { padding:16px; } nav .links a { margin-left:0; margin-right:12px; } }
+  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+<nav aria-label="사이트">
+  <a class="brand" href="../index.html"><img src="../assets/icon128.png" alt="">PageBunker</a>
+  <div class="links"><a href="../index.html">홈</a><a id="lang-link" href="search-saved-articles.html" hreflang="en" lang="en">English</a></div>
+</nav>
+<main>
+<article>
+  <header class="hero"><div class="wrap">
+    <h1>저장한 기사 여러 편의 본문을 한꺼번에 검색하기</h1>
+    <p class="lead">데스크톱 브라우저에서 기사를 저장한 뒤, 보관함에서 그 본문을 함께 찾습니다. 계정과 서버는 없습니다.</p>
+    <p class="meta">PageBunker 제작자가 작성했습니다. 공개 확장의 검색을 <time datetime="2026-10-02">2026-10-02</time> 기준으로 설명합니다.</p>
+  </div></header>
+  <div class="wrap">
+    <aside class="toc" aria-labelledby="contents">
+      <h2 id="contents">목차</h2>
+      <ol>
+        <li><a href="#save">본문을 먼저 저장하기</a></li>
+        <li><a href="#search">보관함 검색창에 입력하기</a></li>
+        <li><a href="#matches">여러 기사의 일치 문장 보기</a></li>
+        <li><a href="#read">기사를 열어 읽기</a></li>
+        <li><a href="#limits">검색이 보는 범위</a></li>
+        <li><a href="#offline">오프라인 읽기와 원문 주소</a></li>
+        <li><a href="#devices">모바일 앱과 동기화는 없음</a></li>
+      </ol>
+    </aside>
+    <section id="save">
+      <h2>1. 본문을 먼저 저장하기</h2>
+      <p>문장 검색은 이 컴퓨터에 이미 저장해 둔 글을 봅니다. 본문의 단어를 찾으려면 그 기사를 연 상태에서 먼저 저장하세요.</p>
+      <ul>
+        <li>툴바 버튼을 누른 뒤 "이 글 저장"을 선택합니다.</li>
+        <li>페이지를 우클릭하고 "이 글 저장"을 선택합니다.</li>
+        <li><code>Alt+Shift+L</code>을 누릅니다. 맥에서는 <code>Option+Shift+L</code>입니다.</li>
+      </ul>
+      <p>제목, 작성자, 날짜, 본문을 남기고 광고, 메뉴, 댓글은 빼둡니다. 기사 본문을 뽑지 못하면 링크만 남습니다.</p>
+      <div class="honest">Pocket CSV는 링크만 가져옵니다. 본문 검색은 본문이 실제로 저장된 기사에 적용됩니다. 가져온 뒤 아직 열리는 원문을 저장해야 그 문장을 찾을 수 있습니다. Instapaper CSV와 북마크 파일도 같습니다.</div>
+    </section>
+    <section id="search">
+      <h2>2. 보관함 검색창에 입력하기</h2>
+      <p>PageBunker 보관함을 열고 위쪽 검색창을 사용합니다. 비어 있을 때의 안내 문구는 "글 검색"입니다. 검색어 하나는 저장한 각 기사의 제목, 작성자, 사이트 이름, 태그, 저장한 본문과 비교됩니다. 열어 둔 탭은 검색 범위를 줄이지 않습니다. 읽을 글, 읽은 글, 보관, 휴지통을 함께 보고, 선택한 태그도 범위를 좁히지 않습니다.</p>
+      <p>입력한 단어는 그 기사 안에 모두 있어야 합니다. 단어 순서를 유지해야 하면 따옴표로 묶으세요. 예를 들어 <code>"링크 부패"</code>처럼 입력합니다. 따옴표로 묶은 구절은 항목 하나로 셉니다. 검색창은 항목을 여덟 개까지 쓰며, 각 항목은 100자까지 읽습니다.</p>
+      <p>영문 대소문자와 앞뒤 공백은 일치 여부를 바꾸지 않습니다. 한국어와 영어 본문을 모두 검색합니다.</p>
+    </section>
+    <section id="matches">
+      <h2>3. 여러 기사의 일치 문장 보기</h2>
+      <p>일치하는 기사가 함께 나열됩니다. 단어가 저장한 본문에 있으면 카드에 첫 일치 주변의 짧은 문장이 보이고, 그 단어가 표시됩니다. 검색 한 번으로 여러 기사에서 같은 단어를 볼 수 있습니다.</p>
+      <figure>
+        <img src="../assets/search-ko.png" width="1280" height="800" alt="검색어가 여러 저장 기사의 본문에 표시된 PageBunker 보관함">
+        <figcaption>보관함 검색에서 여러 저장 기사가 나열되고, 각 문장의 일치 단어가 표시됩니다.</figcaption>
+      </figure>
+      <p>제목이 일치하는 기사가 사이트 이름이나 태그만 일치하는 기사보다 앞에 나오고, 그다음이 본문에서만 일치하는 기사입니다. 같은 방식으로 일치하면 더 최근에 저장한 기사가 앞에 옵니다.</p>
+      <p>본문 없이 제목만 있는 링크도 제목, 사이트 이름, 태그로는 찾을 수 있습니다. 본문을 저장하기 전에는 기사 문장이 카드에 나오지 않습니다.</p>
+    </section>
+    <section id="read">
+      <h2>4. 기사를 열어 읽기</h2>
+      <p>결과를 선택하면 읽기 화면에서 저장한 본문이 열립니다. 글자 크기, 줄간격, 폭, 밝은 테마와 어두운 테마를 바꿀 수 있고, 읽던 위치를 기억합니다.</p>
+      <p>끝까지 읽으면 읽음으로 표시될 수 있습니다. 이 동작은 설정에서 끌 수 있습니다.</p>
+    </section>
+    <section id="limits">
+      <h2>5. 검색이 보는 범위</h2>
+      <ul>
+        <li>검색 범위는 이 컴퓨터의 보관함 전체입니다. 읽을 글, 읽은 글, 보관, 휴지통을 함께 봅니다. 열린 웹 전체를 검색하지 않고, 저장하지 않은 페이지도 검색하지 않습니다.</li>
+        <li>본문의 단어는 그 본문이 저장되어 있을 때 찾습니다. Pocket CSV의 한 줄이나 다른 가져오기 링크만으로는 그 단어가 들어오지 않습니다.</li>
+        <li>카드의 문장은 저장한 본문에서 첫 일치 주변을 짧게 자른 것이며, 기사 전문이 아닙니다.</li>
+        <li>검색창을 비우면 열어 두었던 탭과 태그 목록으로 돌아가며, 검색 조건은 사라집니다.</li>
+        <li>검색 한 번에 목록으로 나오는 기사는 최대 500편입니다.</li>
+      </ul>
+      <p class="source">검색 동작은 이 저장소의 확장 소스와 공개 기능 설명을 기준으로 확인했습니다. <a href="https://github.com/elitekid/pagebunker#features">PageBunker README</a>.</p>
+    </section>
+    <section id="offline">
+      <h2>6. 오프라인 읽기와 원문 주소</h2>
+      <p>저장한 글자는 네트워크가 없어도 열리며, 원문 페이지가 사라진 뒤에도 열립니다. 원문 주소는 그대로 남아 있어, 그 사이트가 열려 있으면 원문으로 이동할 수 있습니다.</p>
+      <div class="honest">이미지는 오프라인으로 보관하지 않습니다. "이미지 보기"를 누르거나 설정에서 이미지 불러오기를 켜기 전까지 불러오지 않습니다. 이미지를 불러오면 원문 사이트에 접속하며 연결이 필요합니다. 오프라인에서 글자를 읽는 것과 이미지를 보는 것은 다른 결과입니다.</div>
+    </section>
+    <section id="devices">
+      <h2>7. 모바일 앱과 동기화는 없음</h2>
+      <p>PageBunker는 크롬, 엣지, 파이어폭스, 웨일용 데스크톱 브라우저 확장입니다. 모바일 앱은 없습니다. 계정이나 서버로 보내는 데이터가 없으므로 컴퓨터와 휴대폰 사이에서 보관함이 동기화되지 않습니다.</p>
+      <p>보관함은 이 컴퓨터의 브라우저 안에 있습니다. 백업 파일은 다운로드/PageBunker 아래에도 기록됩니다. 그 파일을 다른 컴퓨터로 복사해 복원하는 것은 직접 옮기는 일이며 동기화가 아닙니다. 사파리는 지원하지 않습니다.</p>
+      <p>크롬, 엣지, 웨일은 1.1.2, 파이어폭스는 1.1.1이 공개되어 있습니다. 1.1.2에서 바뀐 것은 스토어 이름이며 검색은 같습니다.</p>
+      <div class="install">
+        <a href="https://chromewebstore.google.com/detail/pagebunker/pbobkmgfnaffcckkggiajhjdbjplgpce">크롬에 설치</a>
+        <a href="https://microsoftedge.microsoft.com/addons/detail/pagebunker/mmlfiljlnohhhjacaoniejfelagjcgna">엣지에 설치</a>
+        <a href="https://addons.mozilla.org/firefox/addon/pagebunker/">파이어폭스에 설치</a>
+        <a href="https://store.whale.naver.com/detail/ojlgpkfjdhcoihcmkjhkmeinjbccifia">웨일에 설치</a>
+      </div>
+      <p>내보내기 파일이 링크로 들어오고, 그 뒤에 본문을 채우는 순서는 <a href="import-pocket-instapaper.html">보관 중인 Pocket·Instapaper 파일 가져오기</a>를 보세요.</p>
+      <p>PageBunker를 쓰고 있나요? 괜찮다면 어디서 알게 됐는지, 전에는 무엇을 썼는지 알려 주세요. 어떤 소개가 실제로 도움이 되는지 아는 데 씁니다. 선택 사항이고 리뷰나 별점은 필요 없어요. <a href="https://github.com/elitekid/pagebunker/issues/new?template=usage_note.md">짧은 메모 남기기</a></p>
+    </section>
+  </div>
+</article>
+</main>
+<footer><div class="wrap">PageBunker 제작자 작성 · <a href="../index.html">공식 사이트</a> · <a href="../privacy/">개인정보 처리방침</a> · <a href="https://github.com/elitekid/pagebunker">소스 코드</a></div></footer>
+<script>
+  (function () {
+    var link = document.getElementById('lang-link');
+    if (link && location.search) link.href += location.search;
+  })();
+</script>
+<script>
+  (function () {
+    var inbound = new URLSearchParams(location.search);
+    var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+    var tags = keys.filter(function (k) { return inbound.get(k); }).map(function (k) { return [k, inbound.get(k).slice(0, 40)]; });
+    if (!tags.length) {
+      tags = [['utm_source', 'site'], ['utm_medium', 'guide'], ['utm_campaign', 'pb-search-guide'], ['utm_content', 'install']];
+    }
+    document.querySelectorAll('a[href^="https://chromewebstore.google.com/"], a[href^="https://addons.mozilla.org/"], a[href^="https://microsoftedge.microsoft.com/"], a[href^="https://store.whale.naver.com/"]').forEach(function (a) {
+      var url = new URL(a.href);
+      tags.forEach(function (pair) { url.searchParams.set(pair[0], pair[1]); });
+      a.href = url.toString();
+    });
+  })();
+</script>
+</body>
+</html>

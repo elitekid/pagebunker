@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://elitekid.github.io/pagebunker/</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-02</lastmod>
   </url>
   <url>
     <loc>https://elitekid.github.io/pagebunker/guides/import-pocket-instapaper.html</loc>
@@ -11,6 +11,14 @@
   <url>
     <loc>https://elitekid.github.io/pagebunker/guides/read-later-without-account.html</loc>
     <lastmod>2026-09-18</lastmod>
+  </url>
+  <url>
+    <loc>https://elitekid.github.io/pagebunker/guides/search-saved-articles.html</loc>
+    <lastmod>2026-10-02</lastmod>
+  </url>
+  <url>
+    <loc>https://elitekid.github.io/pagebunker/guides/search-saved-articles-ko.html</loc>
+    <lastmod>2026-10-02</lastmod>
   </url>
   <url>
     <loc>https://elitekid.github.io/pagebunker/privacy/</loc>

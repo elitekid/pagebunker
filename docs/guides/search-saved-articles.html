@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search the text of saved articles in PageBunker</title>
+<meta name="description" content="Search the saved text of several articles at once in the PageBunker library. No account and no server. Body search applies after the article text is saved.">
+<link rel="icon" href="../assets/icon128.png">
+<link rel="alternate" hreflang="en" href="search-saved-articles.html">
+<link rel="alternate" hreflang="ko" href="search-saved-articles-ko.html">
+<style>
+  :root { --ink:#1b1f24; --muted:#5b6470; --line:#e3e6ea; --bg:#fafbfc; --card:#fff; --link:#1f5fbf; --navy:#16213a; --navy2:#2b3a55; --accent:#3fc8a8; --warn:#b3540b; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:-apple-system,"Segoe UI",Inter,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; color:var(--ink); background:var(--bg); line-height:1.75; overflow-wrap:anywhere; }
+  .wrap { max-width:960px; margin:0 auto; padding:0 20px; }
+  nav { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+  nav .brand { display:flex; align-items:center; gap:10px; font-weight:700; text-decoration:none; color:var(--ink); }
+  nav .brand img { width:28px; height:28px; border-radius:7px; }
+  nav .links a { margin-left:16px; color:var(--muted); font-size:14px; }
+  a { color:var(--link); text-underline-offset:3px; }
+  a:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  header.hero { background:radial-gradient(circle at 15% 15%, var(--navy2) 0, var(--navy) 60%); color:#fff; padding:48px 0; }
+  .hero h1 { font-size:38px; line-height:1.3; margin:0 0 18px; letter-spacing:-1px; }
+  .hero .lead { color:#dbe3f0; font-size:18px; }
+  .hero .meta { color:#dbe3f0; font-size:14px; }
+  .toc { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin:32px 0; }
+  .toc ol { margin-bottom:0; }
+  section { padding:32px 0; }
+  section + section { border-top:1px solid var(--line); }
+  h2 { font-size:26px; line-height:1.4; margin:0 0 14px; letter-spacing:-.5px; }
+  p { margin:12px 0; }
+  li + li { margin-top:8px; }
+  .honest { border-left:4px solid var(--warn); background:#fff6ee; padding:12px 16px; border-radius:6px; margin-top:18px; font-size:15px; }
+  .source { color:var(--muted); font-size:14px; }
+  code { background:#f1f3f6; padding:1px 6px; border-radius:4px; font-size:13px; }
+  figure { margin:18px 0 8px; }
+  figure img { width:100%; height:auto; border:1px solid var(--line); border-radius:12px; background:#0e1626; }
+  figcaption { color:var(--muted); font-size:14px; margin-top:8px; }
+  .install { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+  .install a { display:inline-block; background:var(--navy); color:#fff; text-decoration:none; border-radius:8px; padding:8px 14px; font-size:14px; }
+  footer { color:var(--muted); font-size:13px; padding:34px 0 54px; border-top:1px solid var(--line); }
+  @media (max-width:760px) { .hero h1 { font-size:30px; } h2 { font-size:23px; } .toc { padding:16px; } nav .links a { margin-left:0; margin-right:12px; } }
+  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+<nav aria-label="Site">
+  <a class="brand" href="../index.html"><img src="../assets/icon128.png" alt="">PageBunker</a>
+  <div class="links"><a href="../index.html">Home</a><a id="lang-link" href="search-saved-articles-ko.html" hreflang="ko" lang="ko">한국어</a></div>
+</nav>
+<main>
+<article>
+  <header class="hero"><div class="wrap">
+    <h1>Search the text of several saved articles</h1>
+    <p class="lead">Save articles in the desktop browser, then search their text together from the library. No account and no server.</p>
+    <p class="meta">Written by the maker of PageBunker. Describes the search in the public extension as of <time datetime="2026-10-02">2026-10-02</time>.</p>
+  </div></header>
+  <div class="wrap">
+    <aside class="toc" aria-labelledby="contents">
+      <h2 id="contents">Contents</h2>
+      <ol>
+        <li><a href="#save">Save the article text first</a></li>
+        <li><a href="#search">Type in the library search box</a></li>
+        <li><a href="#matches">Read the matching sentences</a></li>
+        <li><a href="#read">Open an article</a></li>
+        <li><a href="#limits">What a search can and cannot see</a></li>
+        <li><a href="#offline">Offline reading and the original page</a></li>
+        <li><a href="#devices">No mobile app and no sync</a></li>
+      </ol>
+    </aside>
+    <section id="save">
+      <h2>1. Save the article text first</h2>
+      <p>A search for a sentence looks at text that is already stored on this computer. Open the article and save it before you search for words from the body.</p>
+      <ul>
+        <li>Click the toolbar button, then choose "Save this article".</li>
+        <li>Or right-click the page and choose "Save this article".</li>
+        <li>Or press <code>Alt+Shift+L</code> (<code>Option+Shift+L</code> on a Mac).</li>
+      </ul>
+      <p>PageBunker keeps the title, author, date, and article text, and leaves out ads, menus, and comments. If the page has no extractable article text, the save keeps the link.</p>
+      <div class="honest">A Pocket CSV import brings links, not article text. Body search applies to articles whose text was actually saved. After import, open a page that is still available and save it if you want its sentences to be searchable. The same limit applies to an Instapaper CSV or a bookmarks file.</div>
+    </section>
+    <section id="search">
+      <h2>2. Type in the library search box</h2>
+      <p>Open the PageBunker library and use the search box at the top. Its empty hint reads "Search articles". One query is checked against every saved article's title, author, site name, tags, and saved text. The open tab does not limit this. To read, Read, Archive, and Trash are searched together, and a selected tag does not narrow it either.</p>
+      <p>Each word you type has to appear in that article. Put a phrase in quotation marks when those words must stay together, as in <code>"link rot"</code>. A quoted phrase counts as one entry. The box uses up to eight entries, and each entry is read up to 100 characters.</p>
+      <p>Capital letters and surrounding spaces do not change the match. English and Korean text are both searched.</p>
+    </section>
+    <section id="matches">
+      <h2>3. Read the matching sentences</h2>
+      <p>Articles that match are listed together. When the words appear in the saved text, the card shows a short passage around the first match, with those words marked. One search can surface the same words in several articles.</p>
+      <figure>
+        <img src="../assets/search-en.png" width="1280" height="800" alt="PageBunker library with the search word archive marked in the text of several saved articles">
+        <figcaption>Library search listing several saved articles, with the matching word marked in each passage.</figcaption>
+      </figure>
+      <p>A match in the title is listed before a match that is only in the site name or tags, and those are listed before a match that is only in the body. When two articles match in the same way, the one saved more recently is listed first.</p>
+      <p>A link that has a title but no saved text can still match that title, the site name, or a tag. It will not show a passage from the article until the text is saved.</p>
+    </section>
+    <section id="read">
+      <h2>4. Open an article</h2>
+      <p>Choose a result to open it in the reader. You read the saved text there. Font size, line spacing, width, and the light or dark theme can be changed, and the reader keeps your place.</p>
+      <p>Reaching the end can mark the article as read. That behavior can be turned off in settings.</p>
+    </section>
+    <section id="limits">
+      <h2>5. What a search can and cannot see</h2>
+      <ul>
+        <li>Search covers the library on this computer, across To read, Read, Archive, and Trash. It does not search the open web, and it does not search a page you have not saved.</li>
+        <li>Words in the body are found when that body was saved. A Pocket CSV row, or any other imported link, does not add those words by itself.</li>
+        <li>The passage on the card is a short extract around the first match in the saved text, not the whole article.</li>
+        <li>Clearing the search box returns to the tab and tag you had open, with no search filter.</li>
+        <li>One search lists at most 500 matching articles.</li>
+      </ul>
+      <p class="source">Search behavior checked against the extension source in this repository and the public feature description: <a href="https://github.com/elitekid/pagebunker#features">PageBunker README</a>.</p>
+    </section>
+    <section id="offline">
+      <h2>6. Offline reading and the original page</h2>
+      <p>Saved text opens without a network connection, including after the original page is gone. The original address is still kept, and you can open it when that site is available.</p>
+      <div class="honest">Images are not stored for offline reading. They stay unloaded until you choose "Show images" or turn image loading on in settings. Loading them contacts the original site and needs a connection. Offline text and offline images are different outcomes.</div>
+    </section>
+    <section id="devices">
+      <h2>7. No mobile app and no sync</h2>
+      <p>PageBunker is a desktop browser extension for Chrome, Edge, Firefox, and Whale. It has no mobile app. Nothing is sent to an account or a server, so libraries do not sync between computers or phones.</p>
+      <p>The library lives in the browser on this computer. A backup file is also written under Downloads/PageBunker. Copying that file to another computer and restoring it there is a manual copy, not sync. Safari is not supported.</p>
+      <p>Chrome, Edge, and Whale offer version 1.1.2. Firefox offers version 1.1.1. The 1.1.2 change is the store name, and search is the same.</p>
+      <div class="install">
+        <a href="https://chromewebstore.google.com/detail/pagebunker/pbobkmgfnaffcckkggiajhjdbjplgpce">Get it for Chrome</a>
+        <a href="https://microsoftedge.microsoft.com/addons/detail/pagebunker/mmlfiljlnohhhjacaoniejfelagjcgna">Get it for Edge</a>
+        <a href="https://addons.mozilla.org/firefox/addon/pagebunker/">Get it for Firefox</a>
+        <a href="https://store.whale.naver.com/detail/ojlgpkfjdhcoihcmkjhkmeinjbccifia">Get it for Whale</a>
+      </div>
+      <p>For how an export file becomes links, and how those links get article text afterward, see <a href="import-pocket-instapaper.html">moving Pocket and Instapaper export files into PageBunker</a>.</p>
+      <p>Using PageBunker? If you like, tell us where you found it and what you used before — it shows us which introductions actually help. It is optional, and no review or rating is needed. <a href="https://github.com/elitekid/pagebunker/issues/new?template=usage_note.md">Leave a short note</a></p>
+    </section>
+  </div>
+</article>
+</main>
+<footer><div class="wrap">PageBunker, written by its maker · <a href="../index.html">Official site</a> · <a href="../privacy/">Privacy policy</a> · <a href="https://github.com/elitekid/pagebunker">Source code</a></div></footer>
+<script>
+  (function () {
+    var link = document.getElementById('lang-link');
+    if (link && location.search) link.href += location.search;
+  })();
+</script>
+<script>
+  (function () {
+    var inbound = new URLSearchParams(location.search);
+    var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+    var tags = keys.filter(function (k) { return inbound.get(k); }).map(function (k) { return [k, inbound.get(k).slice(0, 40)]; });
+    if (!tags.length) {
+      tags = [['utm_source', 'site'], ['utm_medium', 'guide'], ['utm_campaign', 'pb-search-guide'], ['utm_content', 'install']];
+    }
+    document.querySelectorAll('a[href^="https://chromewebstore.google.com/"], a[href^="https://addons.mozilla.org/"], a[href^="https://microsoftedge.microsoft.com/"], a[href^="https://store.whale.naver.com/"]').forEach(function (a) {
+      var url = new URL(a.href);
+      tags.forEach(function (pair) { url.searchParams.set(pair[0], pair[1]); });
+      a.href = url.toString();
+    });
+  })();
+</script>
+</body>
+</html>
